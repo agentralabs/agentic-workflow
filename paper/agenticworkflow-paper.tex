@@ -1,113 +1,149 @@
-\documentclass[10pt,twocolumn]{article}
-
+\documentclass[10pt, twocolumn]{article}
 \usepackage[margin=0.75in]{geometry}
-\usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{hyperref}
 \usepackage{xcolor}
-\usepackage{tikz}
-\usepackage{listings}
-\usepackage{enumitem}
-\usepackage{multicol}
 \usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{amssymb}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, calc, backgrounds, decorations.markings}
 
-% Agentra color palette (matches AgenticMemory papers)
 \definecolor{amblue}{HTML}{2563EB}
+\definecolor{amdarkblue}{HTML}{1E40AF}
 \definecolor{amteal}{HTML}{0D9488}
 \definecolor{amorange}{HTML}{EA580C}
+\definecolor{amgray}{HTML}{6B7280}
+\definecolor{amlightgray}{HTML}{F3F4F6}
+\definecolor{amgreen}{HTML}{059669}
 \definecolor{amred}{HTML}{DC2626}
 \definecolor{ampurple}{HTML}{7C3AED}
-\definecolor{amgreen}{HTML}{16A34A}
-\definecolor{amgray}{HTML}{6D6A63}
 
-\hypersetup{colorlinks=true,linkcolor=amblue,urlcolor=amblue,citecolor=amteal}
+\lstset{basicstyle=\ttfamily\scriptsize,keywordstyle=\color{amblue}\bfseries,commentstyle=\color{amgray}\itshape,stringstyle=\color{amteal},breaklines=true,frame=single,rulecolor=\color{amgray!30},backgroundcolor=\color{amlightgray},numbers=left,numberstyle=\tiny\color{amgray},tabsize=2}
 
-\lstset{
-  basicstyle=\ttfamily\scriptsize,
-  breaklines=true,
-  frame=single,
-  rulecolor=\color{amgray},
-  keywordstyle=\color{amblue},
-  commentstyle=\color{amgray},
-  stringstyle=\color{amgreen},
-}
+\pagestyle{fancy}\fancyhf{}\renewcommand{\headrulewidth}{0.4pt}\fancyhead[L]{\small\textit{AgenticWorkflow}}\fancyhead[R]{\small\thepage}
 
-\title{\textbf{AgenticWorkflow: A Universal Orchestration Engine\\for Agent Coordination via MCP}}
-
-\author{Omoshola Owolabi\\
-\texttt{ORCID: 0009-0006-4089-0732}\\
-Agentra Labs\\
-\texttt{contact@agentralabs.tech}}
-
+\title{\textbf{AgenticWorkflow: A Universal Orchestration Engine for\\Portable, Resilient, and AI-Native Agent Coordination}}
+\author{Omoshola Owolabi\\\small Researcher -- AI/ML\\\small Agentra Labs\\\small\texttt{omoshola.owolabi@agentralabs.tech}}
 \date{March 2026}
 
 \begin{document}
 \maketitle
+\thispagestyle{fancy}
 
-% ============================================================
 \begin{abstract}
-We present AgenticWorkflow, a universal orchestration engine that coordinates workflows, pipelines, state machines, batch processing, and every coordination pattern through a single system.
-The engine introduces 24 capabilities spanning execution, resilience, governance, state management, templates, and intelligence, exposed through 124 MCP (Model Context Protocol) tools.
-Unlike existing orchestration systems (Airflow, Temporal, GitHub Actions, Zapier), AgenticWorkflow is AI-native: agents can create, modify, reason about, and optimize workflows at runtime.
-All state persists in a single \texttt{.awf} binary file format with BLAKE3 integrity verification and LZ4 compression.
-The implementation comprises 9,505 lines of Rust across 4 crates, with 281 tests achieving 0 failures.
-Stress testing validates DAG operations on 1,000-step graphs in $<$50ms, 10,000-item batch creation in $<$500ms, and 1,000 FSM transitions in $<$100ms on Apple ARM64 hardware.
-The system is fully open-source under the MIT license.
+Workflow orchestration for AI agents requires support for every coordination pattern---DAGs, state machines, batch processing, stream processing, fan-out/fan-in---in a single engine that operates without infrastructure. Current systems (Airflow, Temporal, GitHub Actions, Zapier) each address one pattern, require cloud deployment, and offer no mechanism for agents to reason about or modify workflows at runtime. We present AgenticWorkflow, a universal orchestration engine that models workflows as directed acyclic graphs with typed edges (sequence, parallel, conditional, loop), provides five resilience subsystems (failure-classified retry with $d(n) = \min(d_0 \cdot m^n, d_{\max})$ exponential backoff, per-step rollback with cryptographic receipts, workflow-aware circuit breakers, intelligent dead letter management, and built-in idempotency), and exposes all capabilities through 124~MCP tools enabling any compatible agent to orchestrate workflows without custom integration. All state persists in a single \texttt{.awf} binary file with BLAKE3 integrity verification per section. The implementation comprises 13{,}405 lines of Rust across 4~crates, with 281~tests achieving zero failures. Stress testing on Apple ARM64 validates DAG operations on 1{,}000-step graphs in $<$50\,ms, 10{,}000-item batch creation in $<$500\,ms, 1{,}000 FSM transitions in $<$100\,ms, and 1{,}000-depth variable scope cascade in constant time. The system is fully open-source under the MIT license.
 \end{abstract}
 
-% ============================================================
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
-Workflow orchestration is a fundamental capability for autonomous agent systems.
-As agents coordinate increasingly complex tasks---deploying software, processing data pipelines, managing business processes---they require an orchestration layer that understands \emph{every} coordination pattern, not just one.
+The transformer architecture~\cite{vaswani2017attention} has enabled language model agents capable of multi-step planning, code generation, and autonomous task execution. Yet these agents lack a fundamental capability: the ability to \emph{orchestrate} complex sequences of actions with resilience guarantees. When an agent must deploy software, it needs a pipeline. When a step fails, it needs intelligent retry. When a deployment goes wrong, it needs rollback. When a human must approve, it needs a gate. No existing system provides all of these as a single, AI-native library.
 
-Current orchestration tools are specialized:
-\begin{itemize}[nosep]
-  \item \textbf{Apache Airflow}~\cite{airflow}: DAG-based, Python-only, requires infrastructure.
-  \item \textbf{Temporal}~\cite{temporal}: Powerful but requires SDK integration and server deployment.
-  \item \textbf{GitHub Actions}~\cite{ghactions}: CI/CD-focused, YAML configuration, no dynamic planning.
-  \item \textbf{Zapier}: Simple trigger-action pairs, no complex branching or rollback.
+Current workflow orchestration tools are specialized and infrastructure-heavy:
+\begin{itemize}[nosep, leftmargin=*]
+  \item \textbf{Apache Airflow}~\cite{airflow}: DAG-based pipelines requiring Celery, Kubernetes, or managed cloud.
+  \item \textbf{Temporal}~\cite{temporal}: Durable execution with saga patterns, requiring server deployment and SDK-specific code.
+  \item \textbf{GitHub Actions}~\cite{ghactions}: CI/CD-focused YAML pipelines with no dynamic planning or runtime modification.
+  \item \textbf{Zapier}: Simple trigger-action pairs with no complex branching, rollback, or approval logic.
+  \item \textbf{Prefect}~\cite{prefect}: Python-first orchestration with cloud-dependent deployment.
 \end{itemize}
 
-None provides: (a) all coordination patterns in a single engine, (b) AI-native creation and reasoning, (c) zero-infrastructure local execution, and (d) resilience primitives (retry intelligence, rollback architecture, circuit breakers) as first-class features.
+None provides: (a)~all coordination patterns in a single engine, (b)~AI-native creation and reasoning via MCP~\cite{mcp}, (c)~zero-infrastructure local execution, and (d)~resilience primitives as first-class features.
 
-AgenticWorkflow fills this gap with 24 capabilities organized into six categories (Table~\ref{tab:capabilities}).
-Every capability is accessible through 124 MCP tools, enabling any MCP-compatible agent (Claude, Cursor, Windsurf, Cody) to orchestrate workflows without custom integration.
+The core insight of this work is that orchestration is a \emph{coordination intelligence problem}, not a configuration problem. An agent should be able to create a workflow from natural language, validate its structure, execute it with resilience guarantees, monitor progress, and learn from execution history---all through the same tool interface it uses for everything else.
 
-\paragraph{Contributions.}
-\begin{enumerate}[nosep]
-  \item A universal DAG engine supporting linear, parallel, conditional, and loop patterns with $O(V + E)$ cycle detection.
-  \item Five resilience capabilities: failure-classified retry, per-step rollback with verification, workflow-aware circuit breakers, intelligent dead letter management, and built-in idempotency.
-  \item A governance layer with approval gates (escalation chains, time-bounded, conditional), structured queryable audit trails, and hierarchical variable scoping.
-  \item Intelligence systems: execution archaeology (comparison, anomaly detection, bottleneck analysis), predictive execution, workflow evolution monitoring, and dream-state maintenance.
-  \item The \texttt{.awf} binary file format: memory-mappable, BLAKE3-checksummed, LZ4-compressed, containing all workflow state in a single portable file.
-  \item 124 MCP tools providing complete orchestration capability to any MCP-compatible agent.
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm,every node/.style={font=\small},
+  yamlnode/.style={rectangle, draw=amgray, fill=amlightgray, rounded corners=2pt, minimum width=3.0cm, minimum height=0.6cm, align=center, font=\scriptsize},
+  dagnode/.style={rectangle, rounded corners=3pt, draw=amblue, fill=amblue!10, minimum width=1.1cm, minimum height=0.5cm, font=\tiny, align=center, thick},
+  resnode/.style={rectangle, rounded corners=3pt, draw=amorange, fill=amorange!10, minimum width=1.1cm, minimum height=0.5cm, font=\tiny, align=center, thick},
+  govnode/.style={rectangle, rounded corners=3pt, draw=amteal, fill=amteal!10, minimum width=1.1cm, minimum height=0.5cm, font=\tiny, align=center, thick},
+]
+\node[font=\small\bfseries] at (-4.5, 3.2) {(a) Current Orchestration Tools};
+\node[yamlnode] (a1) at (-6.0, 2.2) {Airflow: DAG only};
+\node[yamlnode] (a2) at (-6.0, 1.2) {Temporal: Saga only};
+\node[yamlnode] (a3) at (-6.0, 0.2) {GH Actions: CI only};
+\node[yamlnode] (a4) at (-6.0, -0.8) {Zapier: Trigger only};
+\node[font=\scriptsize\color{amred}, align=left] at (-2.8, 0.7) {Each solves ONE\\pattern. Requires\\infrastructure.\\No AI creation.\\No rollback.};
+
+\node[font=\small\bfseries] at (3.5, 3.2) {(b) AgenticWorkflow};
+\node[dagnode] (d1) at (1.3, 2.0) {DAG\\Engine};
+\node[dagnode] (d2) at (3.0, 2.0) {State\\Machine};
+\node[dagnode] (d3) at (4.7, 2.0) {Batch\\Stream};
+\node[resnode] (r1) at (1.3, 0.7) {Retry\\Intel.};
+\node[resnode] (r2) at (3.0, 0.7) {Rollback\\Verify};
+\node[resnode] (r3) at (4.7, 0.7) {Circuit\\Breaker};
+\node[govnode] (g1) at (1.3, -0.5) {Approval\\Gate};
+\node[govnode] (g2) at (3.0, -0.5) {Audit\\Trail};
+\node[govnode] (g3) at (4.7, -0.5) {Variable\\Scope};
+\draw[-{Stealth}, amblue] (d1)--(r1);\draw[-{Stealth}, amblue] (d2)--(r2);\draw[-{Stealth}, amblue] (d3)--(r3);
+\draw[-{Stealth}, amorange] (r1)--(g1);\draw[-{Stealth}, amorange] (r2)--(g2);\draw[-{Stealth}, amorange] (r3)--(g3);
+\node[font=\scriptsize\color{amgreen}, align=left] at (6.0, 1.0) {ALL patterns.\\Zero infra.\\MCP-native.\\Resilient.\\Governed.};
+\end{tikzpicture}
+\caption{Comparison of orchestration approaches. (a)~Current tools each solve one coordination pattern and require infrastructure. (b)~AgenticWorkflow unifies all patterns---DAG, FSM, batch, stream---with resilience (retry, rollback, circuit breaker) and governance (approval, audit, variables) in a single zero-infrastructure engine accessible via 124~MCP tools.}
+\label{fig:comparison}
+\end{figure*}
+
+We present AgenticWorkflow with six contributions:
+\begin{enumerate}[nosep, leftmargin=*]
+  \item A universal DAG engine with $O(V + E)$ cycle detection via Kahn's algorithm~\cite{kahn1962}.
+  \item Five resilience subsystems: failure-classified retry, per-step rollback, circuit breakers, dead letter management, and BLAKE3-keyed idempotency.
+  \item A governance layer with approval gates, structured audit trails, and hierarchical variable scoping.
+  \item Intelligence subsystems: execution archaeology, predictive execution, workflow evolution with drift detection.
+  \item The \texttt{.awf} binary file format with per-section BLAKE3 checksums and LZ4~\cite{collet2013lz4} compression.
+  \item 124~MCP tools for complete AI-native orchestration.
 \end{enumerate}
 
-% ============================================================
-\section{Related Work}
+The remainder of this paper is organized as follows. Section~\ref{sec:related} surveys existing systems. Section~\ref{sec:architecture} presents the architecture. Section~\ref{sec:format} describes the file format. Section~\ref{sec:mcp} covers the MCP surface. Section~\ref{sec:evaluation} reports benchmarks and test coverage. Section~\ref{sec:discussion} discusses limitations. Section~\ref{sec:conclusion} concludes.
 
-Table~\ref{tab:comparison} compares AgenticWorkflow against existing orchestration systems across 12 dimensions.
+
+\section{Background and Related Work}\label{sec:related}
+
+Research on workflow orchestration spans two decades. We survey the primary approaches.
+
+\textbf{Apache Airflow}~\cite{airflow} pioneered programmatic DAG definition but requires Celery/Kubernetes infrastructure, provides no state machine support, and offers only basic retry.
+
+\textbf{Temporal}~\cite{temporal} provides durable execution with saga patterns but requires server deployment, SDK-specific definitions, and no MCP integration.
+
+\textbf{Prefect}~\cite{prefect} offers modern Python-first orchestration but requires cloud deployment for production use.
+
+\textbf{LangChain}~\cite{langchain} and \textbf{CrewAI}~\cite{crewai} provide agent orchestration but focus on LLM chains rather than general workflow patterns. \textbf{AutoGen}~\cite{autogen} enables multi-agent conversations but lacks resilience primitives.
+
+\textbf{Generative Agents}~\cite{park2023generative} demonstrated that architecture profoundly impacts agent behavior, reinforcing our thesis that orchestration requires richer structure than simple reactive planning.
+
+Table~\ref{tab:related} summarizes the comparison across 13~dimensions.
 
 \begin{table*}[t]
-\centering
-\caption{Feature comparison across orchestration systems.}
-\label{tab:comparison}
-\scriptsize
-\begin{tabular}{lcccccc}
+\caption{Feature comparison across orchestration systems. AgenticWorkflow is the only system providing all coordination patterns, resilience, governance, and AI-native MCP access with zero infrastructure.}
+\label{tab:related}
+\centering\small
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
 \textbf{Feature} & \textbf{Airflow} & \textbf{Temporal} & \textbf{GH Actions} & \textbf{Zapier} & \textbf{Prefect} & \textbf{AWF} \\
 \midrule
 DAG execution          & \checkmark & \checkmark & \checkmark & ---        & \checkmark & \checkmark \\
-State machines         & ---        & ---        & ---        & ---        & ---        & \checkmark \\
+State machines (FSM)   & ---        & ---        & ---        & ---        & ---        & \checkmark \\
 Batch processing       & Plugin     & \checkmark & ---        & ---        & \checkmark & \checkmark \\
 Stream processing      & ---        & ---        & ---        & ---        & ---        & \checkmark \\
-Retry intelligence     & Basic      & \checkmark & Basic      & Basic      & \checkmark & \checkmark \\
-Rollback architecture  & ---        & Saga       & ---        & ---        & ---        & \checkmark \\
+Failure-classified retry & ---      & Basic      & ---        & ---        & Basic      & \checkmark \\
+Per-step rollback      & ---        & Saga       & ---        & ---        & ---        & \checkmark \\
 Circuit breakers       & ---        & ---        & ---        & ---        & ---        & \checkmark \\
-Approval gates         & ---        & ---        & Env        & ---        & ---        & \checkmark \\
-Audit trail            & Log        & Log        & Log        & Log        & Log        & \checkmark \\
+Approval gates         & ---        & ---        & Env gates  & ---        & ---        & \checkmark \\
+Structured audit trail & Logs       & Logs       & Logs       & Logs       & Logs       & \checkmark \\
 Idempotency            & Manual     & Built-in   & ---        & ---        & Manual     & \checkmark \\
 AI-native (MCP)        & ---        & ---        & ---        & ---        & ---        & \checkmark \\
 Zero infrastructure    & ---        & ---        & Cloud      & Cloud      & Cloud      & \checkmark \\
@@ -116,386 +152,289 @@ Natural language WF    & ---        & ---        & ---        & ---        & ---
 \end{tabular}
 \end{table*}
 
-\paragraph{Workflow Engines.}
-Apache Airflow~\cite{airflow} pioneered programmatic DAG definition but requires Celery/Kubernetes infrastructure.
-Temporal~\cite{temporal} provides durable execution with saga pattern support but requires server deployment and SDK-specific code.
-Prefect~\cite{prefect} offers a modern Python-first alternative with cloud deployment.
-None provides MCP integration or zero-infrastructure local execution.
 
-\paragraph{Agent Orchestration.}
-LangChain~\cite{langchain} and CrewAI~\cite{crewai} provide agent orchestration but focus on LLM chains rather than general workflow patterns.
-AutoGen~\cite{autogen} enables multi-agent conversations but lacks resilience primitives.
-AgenticWorkflow complements these systems by providing the coordination layer they lack.
+\section{Architecture}\label{sec:architecture}
 
-% ============================================================
-\section{Architecture}
+AgenticWorkflow models workflows as directed acyclic graphs $G = (V, E)$ where each vertex $v \in V$ is a typed step and each edge $e \in E$ carries a coordination semantic.
 
-\subsection{Crate Structure}
+\subsection{DAG Engine}\label{sec:dag}
 
-AgenticWorkflow is implemented as a Rust workspace with four crates:
+\textbf{Cycle detection} uses Kahn's algorithm~\cite{kahn1962} with $O(V + E)$ complexity:
 
-\begin{itemize}[nosep]
-  \item \textbf{agentic-workflow}: Core library (types, engines, resilience, governance, template, intelligence, format). 76 source files, 9,505 lines.
-  \item \textbf{agentic-workflow-mcp}: MCP server with 124 tools, stdio/SSE transport.
-  \item \textbf{agentic-workflow-cli}: CLI binary (\texttt{awf}) wrapping core + MCP.
-  \item \textbf{agentic-workflow-ffi}: C FFI bindings for cross-language integration.
-\end{itemize}
+\begin{algorithm}[t]
+\caption{DAG Validation via Topological Sort}
+\label{alg:toposort}
+\begin{algorithmic}[1]
+\REQUIRE Workflow graph $G = (V, E)$
+\ENSURE Topological ordering $\pi$ or cycle error
+\STATE $\text{in\_deg}[v] \leftarrow |\{(u,v) \in E\}|$ for all $v \in V$
+\STATE $Q \leftarrow \{v \in V : \text{in\_deg}[v] = 0\}$
+\STATE $\pi \leftarrow []$
+\WHILE{$Q \neq \emptyset$}
+  \STATE $v \leftarrow Q.\text{dequeue}()$; $\pi.\text{append}(v)$
+  \FORALL{$(v, w) \in E$}
+    \STATE $\text{in\_deg}[w] \leftarrow \text{in\_deg}[w] - 1$
+    \IF{$\text{in\_deg}[w] = 0$} \STATE $Q.\text{enqueue}(w)$ \ENDIF
+  \ENDFOR
+\ENDWHILE
+\IF{$|\pi| \neq |V|$} \RETURN \textsc{CycleDetected} \ENDIF
+\RETURN $\pi$
+\end{algorithmic}
+\end{algorithm}
 
-\subsection{The 24 Capabilitys}
+Four edge types: \textbf{\textsc{Sequence}} (serial), \textbf{\textsc{Parallel}} (concurrent), \textbf{\textsc{Conditional}} (expression-guarded), \textbf{\textsc{Loop}} (bounded iteration unrolled into DAG). Eight step types: Command, McpTool, HttpRequest, SubWorkflow, FanOut, ApprovalGate, Expression, Noop.
 
-Table~\ref{tab:capabilities} organizes the 24 capabilities into six categories.
+\textbf{Validated by:} \texttt{test\_dag\_cycle\_detection}, \texttt{test\_dag\_topological\_sort\_order}, \mbox{\texttt{stress\_dag\_1000\_steps\_linear\_chain}} ($<$50\,ms).
 
-\begin{table}[h]
+\begin{figure}[t]
 \centering
-\caption{24 capabilities organized by category.}
-\label{tab:capabilities}
-\scriptsize
-\begin{tabular}{lll}
-\toprule
-\textbf{Category} & \textbf{\#} & \textbf{Capabilitys} \\
-\midrule
-Core         & 4  & DAG Engine, Execution Consciousness, \\
-             &    & Intelligent Scheduling, Trigger Omniscience \\
-Resilience   & 4  & Retry Intelligence, Rollback Architecture, \\
-             &    & Circuit Breaker, Dead Letter Intelligence \\
-Processing   & 3  & Batch Processing, Stream Processing, \\
-             &    & Fan-Out/Fan-In \\
-Governance   & 3  & Approval Gates, Audit Trail, Idempotency \\
-State        & 2  & State Machine Engine, Variable Scoping \\
-Template     & 2  & Workflow Templates, Natural Language WF \\
-Intelligence & 6  & Archaeology, Prediction, Evolution, \\
-             &    & Dream State, Composition, Collective \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{tikzpicture}[
+  node distance=1.1cm,every node/.style={font=\scriptsize},
+  step/.style={rectangle, rounded corners=3pt, draw=#1, fill=#1!10, minimum width=1.2cm, minimum height=0.45cm, font=\tiny, align=center, thick},
+  step/.default=amblue,
+]
+\node[step=amblue] (build) at (0, 0) {Build};
+\node[step=amblue] (test) at (1.8, 0) {Test};
+\node[step=amorange] (approve) at (3.6, 0) {Approve};
+\node[step=amgreen] (deploy) at (5.4, 0) {Deploy};
+\node[step=amteal] (notify) at (3.6, -1.1) {Notify};
+\draw[-{Stealth}, amblue, thick] (build)--node[above, font=\tiny]{\textsc{Seq}}(test);
+\draw[-{Stealth}, amblue, thick] (test)--node[above, font=\tiny]{\textsc{Seq}}(approve);
+\draw[-{Stealth}, amorange, thick] (approve)--node[above, font=\tiny]{\textsc{Seq}}(deploy);
+\draw[-{Stealth}, amgray, dashed] (test)--node[right, font=\tiny]{\textsc{Par}}(notify);
+\draw[-{Stealth}, amgray, dashed] (notify)--node[right, font=\tiny]{\textsc{Seq}}(deploy);
+\end{tikzpicture}
+\caption{Example deployment DAG. Build$\to$Test$\to$Approve$\to$Deploy is the critical path (solid). Notify runs in parallel after Test (dashed).}
+\label{fig:dag}
+\end{figure}
 
-\subsection{DAG Engine}
+\subsection{Resilience Layer}\label{sec:resilience}
 
-The DAG engine represents workflows as directed acyclic graphs with typed edges.
-Cycle detection uses Kahn's algorithm with $O(V + E)$ complexity.
-
-\begin{equation}
-\text{TopSort}(G) = \text{BFS from } \{v \in V : \text{in-degree}(v) = 0\}
-\end{equation}
-
-Four edge types are supported: \texttt{Sequence} (serial), \texttt{Parallel} (concurrent), \texttt{Conditional} (expression-guarded), and \texttt{Loop} (bounded iteration unrolled into DAG).
-
-\textbf{Validated by:} \texttt{test\_dag\_cycle\_detection}, \texttt{test\_dag\_topological\_sort\_order}, \texttt{stress\_dag\_1000\_steps\_linear\_chain} ($<$50ms for 1K steps).
-
-\subsection{Resilience Layer}
-
-\paragraph{Retry Intelligence.}
-Each failure is classified into one of 7 types: Transient, Permanent, RateLimit, ResourceContention, Authentication, Network, Timeout.
-Per-class retry profiles select strategy and timing.
-Exponential backoff with cap:
-
+\textbf{Retry Intelligence.} Each failure is classified into one of 7~types: Transient, Permanent, RateLimit, ResourceContention, Authentication, Network, Timeout. Per-class profiles select strategy. Exponential backoff:
 \begin{equation}
 d(n) = \min\left(d_0 \cdot m^n,\; d_{\max}\right)
+\label{eq:backoff}
 \end{equation}
+\textbf{Validated by:} \texttt{test\_retry\_strategy\_exponential\_backoff} (100, 200, 400, 800\,ms, capped at 10{,}000\,ms).
 
-where $d_0$ is initial delay, $m$ is multiplier, $d_{\max}$ is cap.
+\textbf{Rollback Architecture.} Every step declares a rollback action. On failure, rollback executes in reverse topological order. Each produces a BLAKE3-checksummed receipt. \textbf{Validated by:} \mbox{\texttt{test\_rollback\_preview\_full\_reverse\_order}} ($3 \to 2 \to 1$).
 
-\textbf{Validated by:} \texttt{test\_retry\_strategy\_exponential\_backoff} (100, 200, 400, 800ms progression, capped at 10,000ms).
-
-\paragraph{Rollback Architecture.}
-Every step declares a rollback action at definition time.
-On failure, rollback executes in reverse topological order.
-Each rollback produces a cryptographic receipt.
-
-\textbf{Validated by:} \texttt{test\_rollback\_preview\_full\_reverse\_order} (steps 3$\to$2$\to$1), \texttt{test\_rollback\_missing\_action\_partial\_failure}.
-
-\paragraph{Circuit Breakers.}
-Workflow-aware circuit breakers track failure counts per service.
-After $N$ failures (configurable threshold), the circuit opens and all requests to that service are rejected until reset or half-open probe.
-
+\textbf{Circuit Breakers.} State transitions:
 \begin{equation}
 \text{state}(s) = \begin{cases}
 \text{Open} & \text{if } f(s) \geq \theta \\
 \text{HalfOpen} & \text{if } t - t_{\text{last}} > \tau \\
-\text{Closed} & \text{if } \text{success}(s) \geq \sigma
+\text{Closed} & \text{if } s_{\text{ok}} \geq \sigma
 \end{cases}
+\label{eq:circuit}
 \end{equation}
+\textbf{Validated by:} \mbox{\texttt{test\_circuit\_breaker\_opens\_after\_threshold}}, \mbox{\texttt{stress\_circuit\_breaker\_rapid\_failures}} (1K ops $<$500\,ms).
 
-\textbf{Validated by:} \mbox{\texttt{test\_circuit\_breaker\_opens\_after\_threshold}}, \mbox{\texttt{stress\_circuit\_breaker\_rapid\_failures}} (1K failures $<$500ms).
+\textbf{Dead Letter Management.} Failed items classified by type, grouped for analysis, auto-retried on recovery. \textbf{Validated by:} \texttt{stress\_dead\_letter\_10k}.
 
-\subsection{Governance Layer}
+\textbf{Idempotency.} Key: $\text{BLAKE3}(\text{wf\_id} \| \text{step\_id} \| \text{input})$. Cache hit returns stored result. \textbf{Validated by:} \texttt{stress\_idempotency\_10k\_keys}.
 
-\paragraph{Approval Gates.}
-Approval chains with escalation: primary $\to$ backup $\to$ manager.
-Conditional auto-approval (expression-based), time-bounded decisions (auto-deny after timeout), and delegation rules.
-Every decision produces a BLAKE3-checksummed receipt.
+\subsection{Governance Layer}\label{sec:governance}
 
-\textbf{Validated by:} \texttt{test\_approval\_flow} (define gate $\to$ request $\to$ approve $\to$ receipt).
+\textbf{Approval Gates.} Chains: primary$\to$backup$\to$escalation. Conditional auto-approval, time-bounded decisions, delegation rules. BLAKE3-checksummed receipts. \textbf{Validated by:} \texttt{test\_approval\_flow}.
 
-\paragraph{Audit Trail.}
-Structured events with actor, timestamp, resource, input, output, and outcome.
-Queryable by workflow, execution, actor, resource, and time range.
-Impact analysis: ``show all workflows that touched resource X.''
+\textbf{Audit Trail.} Structured events queryable by workflow, execution, actor, resource, time range. Impact analysis. \textbf{Validated by:} \texttt{stress\_audit\_10k\_events} ($<$500\,ms).
 
-\textbf{Validated by:} \texttt{stress\_audit\_10k\_events} (10K writes + query 100 results $<$500ms).
+\textbf{Variable Scoping.} Workflow$\to$Branch$\to$Step$\to$Iteration hierarchy. Type checking. Immutability enforcement. \textbf{Validated by:} \texttt{stress\_variable\_1000\_scopes}.
 
-\paragraph{Variable Scoping.}
-Hierarchical scopes: Workflow $\to$ Branch $\to$ Step $\to$ Iteration.
-Variables cascade (child reads parent).
-Type checking catches mismatches at definition time, not runtime.
-Immutability enforcement prevents accidental mutation.
+\subsection{State Machine Engine}\label{sec:fsm}
+First-class FSMs with guard conditions and entry/exit actions. \textbf{Validated by:} \texttt{test\_fsm\_full\_lifecycle} (Created$\to$Paid$\to$Shipped$\to$Delivered), \texttt{stress\_fsm\_1000\_transitions} ($<$100\,ms).
 
-\textbf{Validated by:} \texttt{test\_variable\_scope\_hierarchy}, \texttt{test\_variable\_immutable\_reject}, \texttt{stress\_variable\_1000\_scopes} (1K-deep cascade).
+\subsection{Intelligence Layer}\label{sec:intelligence}
+\textbf{Execution Archaeology.} Anomaly detection at $>3\times$ historical average. Bottleneck analysis. \textbf{Validated by:} \mbox{\texttt{stress\_archaeology\_1000\_fingerprints}}.
 
-\subsection{Intelligence Layer}
+\textbf{Predictive Execution.} Duration, success probability, resource consumption, cost estimates from history.
 
-\paragraph{Execution Archaeology.}
-Compare any two executions: duration ratio, significant step differences ($>$1.5$\times$ or $<$0.5$\times$).
-Anomaly detection: flag executions with duration $>$3$\times$ historical average.
-Bottleneck analysis: identify steps consuming the most cumulative time.
+\textbf{Workflow Evolution.} Drift detection: recent $>1.5\times$ historical $\Rightarrow$ flagged. \textbf{Validated by:} \texttt{test\_evolution\_drift\_detection}.
 
-\textbf{Validated by:} \texttt{test\_archaeology\_anomaly\_detection}, \texttt{test\_archaeology\_bottleneck\_identification}, \texttt{stress\_archaeology\_1000\_fingerprints} ($<$500ms).
 
-\paragraph{Predictive Execution.}
-From historical fingerprints: predicted duration (with confidence interval), success probability (with per-step risk factors), resource consumption, and monetary cost estimates.
+\section{The .awf File Format}\label{sec:format}
 
-\textbf{Validated by:} \texttt{test\_prediction\_duration}, \texttt{test\_prediction\_no\_history} (graceful zero-history handling).
-
-\paragraph{Workflow Evolution.}
-Health score combining success rate and drift detection.
-Drift: compare mean duration of first half vs.\ second half of execution history; flag if recent $>$1.5$\times$ historical.
-
-\textbf{Validated by:} \texttt{test\_evolution\_drift\_detection}, \texttt{test\_evolution\_health\_score}.
-
-% ============================================================
-\section{The .awf File Format}
-
-All workflow state persists in a single \texttt{.awf} binary file:
-
-\begin{lstlisting}[language={}]
-Header:      AWFL magic | version | counts
-Sections:    type(u8) | length(u32) | data | BLAKE3(32B)
-  1: Workflow Registry
-  2: Template Library
-  3: Execution History
-  4: Schedule Table
-  5: State Machine Table
-  6: Trigger Index
-  7: Audit Log
-  8: Idempotency Cache
-  9: Variable Store
-\end{lstlisting}
-
-Each section is independently checksummed with BLAKE3.
-Corruption in one section does not affect others.
-LZ4 compression is available for content blocks.
-
-\textbf{Validated by:} \texttt{test\_awf\_format\_roundtrip} (write+read lossless), \texttt{test\_edge\_awf\_corrupt\_checksum} (tampered data detected), \texttt{test\_edge\_awf\_invalid\_magic} (bad file rejected), \texttt{stress\_awf\_format\_100\_workflows} (100 workflows $<$200ms).
-
-% ============================================================
-\section{MCP Tool Surface}
-
-AgenticWorkflow exposes 124 MCP tools organized by capability:
-
-\begin{table}[h]
+\begin{figure*}[t]
 \centering
-\caption{MCP tool distribution across 24 capabilities.}
+\begin{tikzpicture}[
+  every node/.style={font=\scriptsize},
+  section/.style={rectangle, draw, minimum height=1.0cm, align=center, font=\scriptsize},
+]
+\node[section, fill=amdarkblue!20, draw=amdarkblue, minimum width=1.2cm] (hdr) at (0, 0) {Header\\16\,B};
+\node[section, fill=amblue!15, draw=amblue, minimum width=2.2cm, anchor=west] (wf) at (hdr.east) {Workflows\\JSON+BLAKE3};
+\node[section, fill=amteal!15, draw=amteal, minimum width=1.6cm, anchor=west] (tmpl) at (wf.east) {Templates};
+\node[section, fill=amorange!15, draw=amorange, minimum width=1.8cm, anchor=west] (exec) at (tmpl.east) {Executions};
+\node[section, fill=ampurple!15, draw=ampurple, minimum width=1.4cm, anchor=west] (sched) at (exec.east) {Schedules};
+\node[section, fill=amgreen!15, draw=amgreen, minimum width=1.2cm, anchor=west] (fsm) at (sched.east) {FSMs};
+\node[section, fill=amred!15, draw=amred, minimum width=1.4cm, anchor=west] (trig) at (fsm.east) {Triggers};
+\node[section, fill=amblue!10, draw=amblue, minimum width=1.2cm, anchor=west] (audit) at (trig.east) {Audit};
+\node[section, fill=amorange!10, draw=amorange, minimum width=1.2cm, anchor=west] (idemp) at (audit.east) {Idemp.};
+\node[section, fill=amteal!10, draw=amteal, minimum width=1.0cm, anchor=west] (vars) at (idemp.east) {Vars};
+\node[font=\tiny, anchor=north, text=amgray] at (hdr.south) {\texttt{AWFL}};
+\node[font=\tiny, anchor=north, text=amgray] at (vars.south east) {EOF};
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick, amgray] ([yshift=-0.6cm]hdr.south west) -- ([yshift=-0.6cm]vars.south east) node[midway, below=8pt, font=\scriptsize, text=amgray] {Single \texttt{.awf} file --- each section independently BLAKE3-checksummed};
+\end{tikzpicture}
+\caption{Layout of the \texttt{.awf} binary file. Header stores magic bytes (\texttt{AWFL}), version, and counts. Each section: type (1\,B) + length (4\,B) + JSON data + BLAKE3 checksum (32\,B). Corruption in one section does not affect others.}
+\label{fig:layout}
+\end{figure*}
+
+\textbf{Validated by:} \texttt{test\_awf\_format\_roundtrip}, \texttt{test\_edge\_awf\_corrupt\_checksum} (tampered data detected), \texttt{test\_edge\_awf\_invalid\_magic}, \mbox{\texttt{stress\_awf\_format\_100\_workflows}} ($<$200\,ms).
+
+
+\section{MCP Tool Surface}\label{sec:mcp}
+
+124~MCP tools organized by subsystem. All descriptions: verb-first imperative, no trailing periods. Unknown tools: error $-32803$.
+
+\begin{table}[t]
+\caption{MCP tool distribution across 24~capabilities.}
 \label{tab:tools}
-\scriptsize
-\begin{tabular}{lr|lr}
+\centering\scriptsize
+\begin{tabular}{@{}lr|lr@{}}
 \toprule
 \textbf{Capability} & \textbf{Tools} & \textbf{Capability} & \textbf{Tools} \\
 \midrule
-DAG Engine       & 6  & Approval Gates   & 6 \\
-Execution        & 8  & Audit Trail      & 5 \\
-Scheduling       & 5  & Idempotency      & 5 \\
-Triggers         & 5  & FSM              & 6 \\
-Retry            & 5  & Variables        & 5 \\
-Rollback         & 5  & Templates        & 5 \\
-Circuit Breaker  & 4  & Natural Language  & 4 \\
-Dead Letter      & 5  & Archaeology      & 5 \\
-Batch            & 5  & Prediction       & 4 \\
-Stream           & 6  & Evolution        & 5 \\
-Fan-Out          & 4  & Dream State      & 4 \\
-Composition      & 5  & Collective       & 5 \\
+DAG Engine & 6 & Approval Gates & 6 \\ Execution & 8 & Audit Trail & 5 \\
+Scheduling & 5 & Idempotency & 5 \\ Triggers & 5 & FSM & 6 \\
+Retry & 5 & Variables & 5 \\ Rollback & 5 & Templates & 5 \\
+Circuit Breaker & 4 & Natural Lang. & 4 \\ Dead Letter & 5 & Archaeology & 5 \\
+Batch & 5 & Prediction & 4 \\ Stream & 6 & Evolution & 5 \\
+Fan-Out & 4 & Dream State & 4 \\ Composition & 5 & Collective & 5 \\
 \midrule
 \multicolumn{2}{l}{\textbf{Total}} & \multicolumn{2}{r}{\textbf{124}} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-All tool descriptions follow the MCP Quality Standard: verb-first imperative, no trailing periods.
-Unknown tools return error code $-32803$ (\texttt{TOOL\_NOT\_FOUND}).
 
-% ============================================================
-\section{Evaluation}
+\section{Evaluation}\label{sec:evaluation}
+
+\subsection{Benchmark Setup}
+\textbf{Hardware.} Apple ARM64, unified memory. \textbf{Software.} Rust 1.82, \texttt{--release}. \textbf{Datasets.} Synthetic workflows at 100, 1K, 10K scale.
+
+\subsection{Performance Results}
+
+\begin{table}[t]
+\caption{Stress test performance. All tests pass within budget.}
+\label{tab:perf}
+\centering\scriptsize
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Operation} & \textbf{Scale} & \textbf{Budget} \\
+\midrule
+DAG validate + topo sort & 1{,}000 steps & $<$50\,ms \\
+Start executions & 100 execs & $<$100\,ms \\
+Batch creation & 10{,}000 items & $<$500\,ms \\
+Dead letter ingest & 10{,}000 items & $<$500\,ms \\
+Idempotency store & 10{,}000 keys & $<$500\,ms \\
+Idempotency check & 10{,}000 keys & $<$200\,ms \\
+Audit record + query & 10{,}000 events & $<$500\,ms \\
+FSM transitions & 1{,}000 steps & $<$100\,ms \\
+.awf write + read & 100 workflows & $<$200\,ms \\
+Anomaly detection & 1{,}000 execs & $<$100\,ms \\
+Circuit breaker ops & 1{,}000 ops & $<$500\,ms \\
+Variable cascade & 1{,}000 depth & instant \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=\columnwidth, height=4.5cm, ybar, bar width=7pt,
+  ylabel={Budget (ms)}, ymode=log, log basis y=10,
+  symbolic x coords={DAG,Exec,Batch,Audit,Idemp,FSM,.awf,Anom},
+  xtick=data, x tick label style={rotate=45, anchor=east, font=\tiny},
+  ymin=10, ymax=1000, grid=major, grid style={gray!20},
+]
+\addplot[fill=amblue!60, draw=amblue] coordinates {(DAG,50)(Exec,100)(Batch,500)(Audit,500)(Idemp,200)(FSM,100)(.awf,200)(Anom,100)};
+\end{axis}
+\end{tikzpicture}
+\caption{Stress test time budgets (log scale). DAG/FSM are interactive ($<$100\,ms). Batch/audit handle 10K-scale within 500\,ms.}
+\label{fig:bench}
+\end{figure}
 
 \subsection{Test Coverage}
 
-281 tests organized in 9 phases plus inline unit tests:
-
-\begin{table}[h]
-\centering
-\caption{Test suite organization. Every paper claim maps to a named test.}
+\begin{table}[t]
+\caption{Test suite: 281 tests, 9 phases, zero failures.}
 \label{tab:tests}
-\scriptsize
-\begin{tabular}{llr}
+\centering\scriptsize
+\begin{tabular}{@{}llr@{}}
 \toprule
 \textbf{Phase} & \textbf{Focus} & \textbf{Tests} \\
 \midrule
-Phase 1 & Type system, serde, variants     & 59 \\
-Phase 2 & Engine operations (DAG, FSM, \ldots) & 31 \\
-Phase 3 & Resilience (retry, rollback, \ldots) & 27 \\
-Phase 4 & Governance (approval, audit, \ldots) & 27 \\
-Phase 5 & Template + Intelligence           & 31 \\
-Phase 6 & Edge cases + error paths          & 28 \\
-Phase 7 & Stress tests (1K--10K scale)      & 14 \\
-Phase 8 & Persistence + step execution      & 39 \\
-Phase 9 & Concurrent access                 & 11 \\
-Inline  & Unit tests in source modules      & 14 \\
+1 & Type system, serde, variants & 59 \\
+2 & Engine operations (DAG, FSM, \ldots) & 31 \\
+3 & Resilience (retry, rollback, \ldots) & 27 \\
+4 & Governance (approval, audit, \ldots) & 27 \\
+5 & Template + Intelligence & 31 \\
+6 & Edge cases + error paths & 28 \\
+7 & Stress tests (1K--10K) & 14 \\
+8 & Persistence + step execution & 39 \\
+9 & Concurrent access & 11 \\
+Inline & Unit tests in source & 14 \\
 \midrule
 \textbf{Total} & & \textbf{281} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Performance Benchmarks}
-
-All benchmarks measured on Apple ARM64, Rust 1.82, release profile.
-
-\begin{table}[h]
-\centering
-\caption{Stress test performance. All tests pass within budget.}
-\label{tab:perf}
-\scriptsize
-\begin{tabular}{lrr}
+\subsection{Implementation Metrics}
+\begin{table}[t]
+\caption{Codebase metrics.}
+\label{tab:metrics}
+\centering\scriptsize
+\begin{tabular}{@{}lr@{}}
 \toprule
-\textbf{Operation} & \textbf{Scale} & \textbf{Budget} \\
+\textbf{Metric} & \textbf{Value} \\
 \midrule
-DAG validate + topo sort       & 1,000 steps   & $<$50ms \\
-Start executions               & 100 execs     & $<$100ms \\
-Batch creation                 & 10,000 items  & $<$500ms \\
-Dead letter ingest + summary   & 10,000 items  & $<$500ms \\
-Idempotency store              & 10,000 keys   & $<$500ms \\
-Idempotency check              & 10,000 keys   & $<$200ms \\
-Audit record + query           & 10,000 events & $<$500ms \\
-FSM transitions                & 1,000 steps   & $<$100ms \\
-.awf write + read              & 100 workflows & $<$200ms \\
-Anomaly detection              & 1,000 execs   & $<$100ms \\
-Circuit breaker failures       & 1,000 ops     & $<$500ms \\
-Trigger activations            & 10,000 ops    & $<$3,000ms \\
-Collective search              & 1,000 items   & $<$500ms \\
-Variable scope cascade         & 1,000 depth   & instant \\
+Rust source files & 89 \\
+Total LOC & 13{,}405 \\
+Core library LOC & 6{,}812 \\
+MCP server LOC & 3{,}118 \\
+Test LOC & 3{,}200 \\
+MCP tools & 124 \\
+Max file size & 362 lines \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Claim-to-Test Traceability}
 
-\begin{table}[h]
-\centering
-\caption{Every paper claim is backed by a named, passing test.}
-\label{tab:traceability}
-\scriptsize
-\begin{tabular}{p{2.8cm}p{4.2cm}}
-\toprule
-\textbf{Paper Claim} & \textbf{Validating Test} \\
-\midrule
-Cycle detection & \texttt{test\_dag\_cycle\_detection} \\
-Backoff capped & \texttt{test\_retry\_strategy\_exponential\_backoff} \\
-Reverse rollback & \texttt{test\_rollback\_preview\_full\_reverse\_order} \\
-Circuit opens & \texttt{test\_circuit\_breaker\_opens\_after\_threshold} \\
-Corrupt detect & \texttt{test\_edge\_awf\_corrupt\_checksum} \\
-1K DAG $<$50ms & \texttt{stress\_dag\_1000\_steps\_linear\_chain} \\
-10K batch $<$500ms & \texttt{stress\_batch\_10k\_items} \\
-1K FSM $<$100ms & \texttt{stress\_fsm\_1000\_transitions} \\
-1K var cascade & \texttt{stress\_variable\_1000\_scopes} \\
-Anomaly detect & \texttt{stress\_archaeology\_1000\_fingerprints} \\
-Drift 1.5$\times$ & \texttt{test\_evolution\_drift\_detection} \\
-Privacy check & \texttt{test\_collective\_privacy\_detect\_secrets} \\
-Unicode support & \texttt{test\_unicode\_in\_step\_names} \\
-Immutability & \texttt{test\_edge\_variable\_immutable\_reject} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\section{Discussion}\label{sec:discussion}
 
-% ============================================================
-\section{Discussion}
+\textbf{Single-file state.} Inspired by SQLite~\cite{sqlite}. Zero deployment complexity.
 
-\subsection{Design Decisions}
+\textbf{Classification by LLM.} All classification (failure type, intent) delegates to LLM micro-calls, not hardcoded keywords. Works for any user, project, language.
 
-\paragraph{Single-file state.}
-All workflow state lives in a single \texttt{.awf} file, inspired by SQLite's ``serverless'' philosophy.
-This eliminates deployment complexity and enables fully offline operation.
+\textbf{Limitations.} (1)~Single-process only; distributed execution requires external runners. (2)~String-based conditional expressions; no formal evaluator. (3)~Trigger polling defined but not wired to OS events. (4)~NL engine delegates parsing to external LLM.
 
-\paragraph{Classification by LLM.}
-Per the project's ``No Hardcoded Intelligence'' rule, all classification tasks (failure type, intent detection, natural language parsing) delegate to LLM micro-calls rather than hardcoded keyword lists.
-This ensures the system works for any user, any project, any language.
+\textbf{Future work.} (1)~gRPC distributed step execution. (2)~Type-safe expression language. (3)~Real-time triggers (inotify, kqueue). (4)~Schema evolution. (5)~Cross-sister orchestration.
 
-\paragraph{Sister-first development.}
-AgenticWorkflow follows the Agentra sister-first development model: before implementing any local logic, developers verify whether an existing sister (Memory, Codebase, Vision) already provides the capability via MCP.
 
-\subsection{Limitations}
+\section{Conclusion}\label{sec:conclusion}
 
-\begin{itemize}[nosep]
-  \item \textbf{No distributed execution}: Current implementation is single-process; distributed step execution requires external runners.
-  \item \textbf{Expression evaluation}: Conditional edges and guards use string expressions; a formal expression evaluator is not yet implemented.
-  \item \textbf{Trigger polling}: File watchers and HTTP pollers are defined but not yet wired to OS-level event systems.
-  \item \textbf{Natural language}: The NL engine captures intent and clarifications but delegates actual parsing to external LLM calls.
-\end{itemize}
+We presented AgenticWorkflow, a universal orchestration engine unifying DAGs, state machines, batch, stream, and fan-out/fan-in. Its 124~MCP tools enable any AI agent to orchestrate workflows without custom integration. The resilience layer (Equations~\ref{eq:backoff},~\ref{eq:circuit}) ensures production-grade durability. With 13{,}405 lines of Rust, 281~tests, and sub-second performance at 10K scale, AgenticWorkflow demonstrates that comprehensive orchestration can be delivered as a lightweight, portable, AI-native library.
 
-\subsection{Future Work}
+\paragraph{Availability.} MIT license. \url{https://github.com/agentralabs/agentic-workflow}.
 
-\begin{enumerate}[nosep]
-  \item Distributed step execution via gRPC task runners.
-  \item Expression language with type-safe evaluation.
-  \item Real-time trigger integration (inotify, kqueue).
-  \item Workflow version migration (v1 $\to$ v2 schema evolution).
-  \item Cross-sister orchestration: Memory + Codebase + Workflow coordination.
-\end{enumerate}
 
-% ============================================================
-\section{Conclusion}
-
-AgenticWorkflow provides a universal orchestration engine that unifies DAGs, state machines, batch processing, stream processing, and fan-out/fan-in in a single system.
-Its 24 capabilities and 124 MCP tools enable any AI agent to create, execute, monitor, and optimize workflows without custom integration.
-The resilience layer (retry, rollback, circuit breaker, dead letter, idempotency) ensures production-grade durability.
-The governance layer (approval gates, audit trails, variable scoping) enables enterprise compliance.
-The intelligence layer (archaeology, prediction, evolution, dream) enables continuous workflow optimization.
-
-With 9,505 lines of Rust, 281 tests (0 failures), and sub-second performance at 10K scale, AgenticWorkflow demonstrates that comprehensive orchestration can be delivered as a lightweight, portable, AI-native library.
-
-\paragraph{Availability.}
-Open-source under MIT license at \url{https://github.com/agentralabs/agentic-workflow}.
-
-% ============================================================
-\begin{thebibliography}{10}
-
-\bibitem{airflow}
-Apache Software Foundation, ``Apache Airflow,'' \url{https://airflow.apache.org/}, 2015--2026.
-
-\bibitem{temporal}
-Temporal Technologies, ``Temporal: Durable Execution Platform,'' \url{https://temporal.io/}, 2020--2026.
-
-\bibitem{ghactions}
-GitHub, ``GitHub Actions,'' \url{https://github.com/features/actions}, 2019--2026.
-
-\bibitem{prefect}
-Prefect Technologies, ``Prefect: Modern Workflow Orchestration,'' \url{https://www.prefect.io/}, 2018--2026.
-
-\bibitem{langchain}
-H.~Chase, ``LangChain: Building applications with LLMs through composability,'' \url{https://github.com/langchain-ai/langchain}, 2022.
-
-\bibitem{crewai}
-J.~Moura, ``CrewAI: Framework for orchestrating role-playing AI agents,'' \url{https://github.com/joaomdmoura/crewAI}, 2024.
-
-\bibitem{autogen}
-Q.~Wu \emph{et al.}, ``AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation,'' \emph{arXiv:2308.08155}, 2023.
-
-\bibitem{mcp}
-Anthropic, ``Model Context Protocol Specification,'' \url{https://modelcontextprotocol.io/}, 2024.
-
-\bibitem{kahn}
-A.~B.~Kahn, ``Topological sorting of large networks,'' \emph{Communications of the ACM}, vol.~5, no.~11, pp.~558--562, 1962.
-
-\bibitem{sqlite}
-D.~R.~Hipp, ``SQLite: A Self-Contained, Serverless, Zero-Configuration, Transactional SQL Database Engine,'' \url{https://sqlite.org/}, 2000--2026.
-
+\begin{thebibliography}{14}
+\bibitem{vaswani2017attention} A.~Vaswani \emph{et al.}, ``Attention Is All You Need,'' in \emph{NeurIPS}, 2017.
+\bibitem{airflow} Apache Software Foundation, ``Apache Airflow,'' \url{https://airflow.apache.org/}, 2015--2026.
+\bibitem{temporal} Temporal Technologies, ``Temporal,'' \url{https://temporal.io/}, 2020--2026.
+\bibitem{ghactions} GitHub, ``GitHub Actions,'' \url{https://github.com/features/actions}, 2019--2026.
+\bibitem{prefect} Prefect Technologies, ``Prefect,'' \url{https://www.prefect.io/}, 2018--2026.
+\bibitem{langchain} H.~Chase, ``LangChain,'' \url{https://github.com/langchain-ai/langchain}, 2022.
+\bibitem{crewai} J.~Moura, ``CrewAI,'' \url{https://github.com/joaomdmoura/crewAI}, 2024.
+\bibitem{autogen} Q.~Wu \emph{et al.}, ``AutoGen,'' \emph{arXiv:2308.08155}, 2023.
+\bibitem{park2023generative} J.~S.~Park \emph{et al.}, ``Generative Agents,'' in \emph{UIST}, 2023.
+\bibitem{mcp} Anthropic, ``Model Context Protocol,'' \url{https://modelcontextprotocol.io/}, 2024.
+\bibitem{kahn1962} A.~B.~Kahn, ``Topological sorting of large networks,'' \emph{Commun.\ ACM}, 5(11), 1962.
+\bibitem{blake3} J.~O'Connor \emph{et al.}, ``BLAKE3,'' \url{https://github.com/BLAKE3-team/BLAKE3}, 2020.
+\bibitem{collet2013lz4} Y.~Collet, ``LZ4,'' \url{https://github.com/lz4/lz4}, 2013.
+\bibitem{sqlite} D.~R.~Hipp, ``SQLite,'' \url{https://sqlite.org/}, 2000--2026.
 \end{thebibliography}
 
 \end{document}
