@@ -12,7 +12,7 @@
   <a href="#install"><img src="https://img.shields.io/badge/cargo_install-agentic--workflow-F59E0B?style=for-the-badge&logo=rust&logoColor=white" alt="cargo install"></a>
   <a href="#mcp-server"><img src="https://img.shields.io/badge/MCP_Server-agentic--workflow--mcp-10B981?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAydjIwTTIgMTJoMjAiLz48L3N2Zz4=&logoColor=white" alt="MCP Server"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge" alt="MIT License"></a>
-  <a href="paper/agenticworkflow-paper.pdf"><img src="https://img.shields.io/badge/Research-Paper-8B5CF6?style=for-the-badge" alt="Research Paper"></a>
+  <a href="paper/paper-i-orchestration/agenticworkflow-paper.pdf"><img src="https://img.shields.io/badge/Research-Paper_I-8B5CF6?style=for-the-badge" alt="Research Paper I"></a>
   <a href="docs/api-reference.md"><img src="https://img.shields.io/badge/format-.awf-3B82F6?style=for-the-badge" alt=".awf format"></a>
 </p>
 
@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <a href="#problems-solved">Problems Solved</a> · <a href="#quickstart">Quickstart</a> · <a href="#the-24-capabilities">24 Capabilities</a> · <a href="#how-it-works">How It Works</a> · <a href="#mcp-tools">MCP Tools</a> · <a href="#benchmarks">Benchmarks</a> · <a href="#install">Install</a> · <a href="docs/api-reference.md">API</a> · <a href="paper/agenticworkflow-paper.pdf">Paper</a>
+  <a href="#problems-solved">Problems Solved</a> · <a href="#quickstart">Quickstart</a> · <a href="#the-24-capabilities">24 Capabilities</a> · <a href="#how-it-works">How It Works</a> · <a href="#mcp-tools">MCP Tools</a> · <a href="#benchmarks">Benchmarks</a> · <a href="#install">Install</a> · <a href="docs/api-reference.md">API</a> · <a href="paper/paper-i-orchestration/agenticworkflow-paper.pdf">Paper</a>
 </p>
 
 ---
@@ -406,7 +406,7 @@ Each section independently BLAKE3-checksummed. Corruption in one section doesn't
 | **Total** | **281** | All passing |
 
 **One research paper:**
-- [AgenticWorkflow: A Universal Orchestration Engine for Agent Coordination via MCP (5 pages, 7 tables)](paper/agenticworkflow-paper.pdf)
+- [Paper I: AgenticWorkflow -- universal orchestration engine (10 pages, 8 figures, 11 tables, real stress test data)](paper/paper-i-orchestration/agenticworkflow-paper.pdf)
 
 ---
 
@@ -421,7 +421,7 @@ agentic-workflow/
 │   ├── agentic-workflow-cli/        # CLI binary (awf)
 │   └── agentic-workflow-ffi/        # FFI bindings (C/Python/WASM)
 ├── assets/                          # Agentra design system SVGs
-├── paper/                           # Research paper (LaTeX)
+├── paper/                           # Research papers (I: Orchestration Engine)
 ├── scripts/                         # Install + guardrail scripts
 ├── docs/                            # Quickstart, API ref, concepts, benchmarks
 └── .github/workflows/               # CI/CD pipelines
