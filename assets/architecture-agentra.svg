@@ -1,117 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-label="AgenticWorkflow architecture in Agentra Labs design system">
   <defs>
     <pattern id="dotgrid" width="20" height="20" patternUnits="userSpaceOnUse">
       <circle cx="2" cy="2" r="1.1" fill="#c8c5bb"/>
     </pattern>
-    <style>
-      .mono { font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace; }
-      .ink { fill: #121212; }
-      .muted { fill: #6d6a63; }
-      .accent { fill: #ea580c; }
-      .card { fill: #fbfaf4; stroke: #111111; stroke-width: 1.6; }
-      .card-dark { fill: #141414; stroke: #111111; stroke-width: 1.6; }
-      .wire { stroke: #8f897e; stroke-width: 1.2; fill: none; }
-      .wire-accent { stroke: #ea580c; stroke-width: 1.8; fill: none; }
-    </style>
+    <style><![CDATA[
+      .mono { font-family:'IBM Plex Mono','JetBrains Mono',monospace; }
+      .ink { fill:#111111; }
+      .muted { fill:#6f6a5f; }
+      .accent { fill:#ea580c; }
+      .panel { fill:#f2f1ea; stroke:#111111; stroke-width:2; }
+      .card { fill:#fbfaf4; stroke:#111111; stroke-width:1.6; }
+      .card-accent { fill:#f6ece4; stroke:#111111; stroke-width:1.6; }
+      .card-dark { fill:#141414; stroke:#111111; stroke-width:1.6; }
+      .wire-soft { stroke:#8f897e; stroke-width:1.2; }
+      .wire-accent { stroke:#ea580c; stroke-width:1.8; }
+    ]]></style>
   </defs>
 
-  <rect width="1200" height="520" fill="#f2f1ea"/>
-  <rect width="1200" height="520" fill="url(#dotgrid)"/>
+  <rect width="1200" height="560" fill="#f2f1ea"/>
+  <rect width="1200" height="560" fill="url(#dotgrid)"/>
 
-  <!-- Title -->
-  <text x="24" y="28" class="mono muted" font-size="11" letter-spacing="2">ARCHITECTURE</text>
-  <line x1="24" y1="38" x2="1176" y2="38" stroke="#1f1f1f" stroke-width="1"/>
+  <line x1="26" y1="28" x2="1174" y2="28" stroke="#111111"/>
+  <text x="30" y="20" class="mono muted" font-size="12" letter-spacing="2.2">// SECTION: AGENTICWORKFLOW.ARCH</text>
+  <text x="1168" y="20" text-anchor="end" class="mono muted" font-size="12" letter-spacing="2">TICK:0024</text>
 
-  <!-- Layer 1: MCP Clients -->
-  <text x="24" y="68" class="mono muted" font-size="10" letter-spacing="1.5">MCP CLIENTS</text>
-  <rect x="24" y="78" width="120" height="40" class="card" rx="6"/>
-  <text x="84" y="103" class="mono ink" font-size="11" text-anchor="middle">Claude</text>
-  <rect x="160" y="78" width="120" height="40" class="card" rx="6"/>
-  <text x="220" y="103" class="mono ink" font-size="11" text-anchor="middle">Cursor</text>
-  <rect x="296" y="78" width="120" height="40" class="card" rx="6"/>
-  <text x="356" y="103" class="mono ink" font-size="11" text-anchor="middle">Windsurf</text>
-  <rect x="432" y="78" width="120" height="40" class="card" rx="6"/>
-  <text x="492" y="103" class="mono ink" font-size="11" text-anchor="middle">Any MCP</text>
+  <rect x="26" y="46" width="1148" height="492" class="panel"/>
 
-  <!-- Wires down -->
-  <line x1="280" y1="118" x2="280" y2="148" class="wire-accent"/>
+  <text x="600" y="84" text-anchor="middle" class="mono ink" font-size="24" letter-spacing="3" font-weight="700">AGENTICWORKFLOW ARCHITECTURE</text>
 
-  <!-- Layer 2: MCP Server -->
-  <rect x="24" y="148" width="530" height="65" class="card-dark" rx="8"/>
-  <text x="44" y="173" class="mono accent" font-size="12" font-weight="700">agentic-workflow-mcp</text>
-  <text x="44" y="193" class="mono" fill="#d8d4cb" font-size="10">Protocol Handler · Tool Registry (124 tools) · Transport (stdio/SSE)</text>
+  <rect x="70" y="106" width="220" height="54" rx="10" class="card"/>
+  <text x="180" y="139" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Claude / Cursor</text>
 
-  <!-- Wire down -->
-  <line x1="280" y1="213" x2="280" y2="243" class="wire-accent"/>
+  <rect x="310" y="106" width="220" height="54" rx="10" class="card"/>
+  <text x="420" y="139" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">awf CLI</text>
 
-  <!-- Layer 3: Core Library (the big one) -->
-  <rect x="24" y="243" width="1150" height="230" fill="#fbfaf4" stroke="#111111" stroke-width="2" rx="10"/>
-  <text x="44" y="270" class="mono accent" font-size="13" font-weight="700" letter-spacing="1">agentic-workflow</text>
-  <text x="230" y="270" class="mono muted" font-size="11">Core Library</text>
+  <rect x="550" y="106" width="260" height="54" rx="10" class="card"/>
+  <text x="680" y="139" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">agentic-workflow-mcp</text>
 
-  <!-- Sub-modules as cards -->
-  <!-- Engine -->
-  <rect x="44" y="285" width="165" height="85" class="card" rx="6"/>
-  <text x="54" y="305" class="mono accent" font-size="10" font-weight="700">ENGINE</text>
-  <text x="54" y="322" class="mono ink" font-size="9">DAG · Scheduler</text>
-  <text x="54" y="337" class="mono ink" font-size="9">Trigger · Batch</text>
-  <text x="54" y="352" class="mono ink" font-size="9">Stream · FanOut · FSM</text>
+  <rect x="830" y="106" width="300" height="54" rx="10" class="card"/>
+  <text x="980" y="139" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Rust API / FFI</text>
 
-  <!-- Resilience -->
-  <rect x="225" y="285" width="165" height="85" class="card" rx="6"/>
-  <text x="235" y="305" class="mono accent" font-size="10" font-weight="700">RESILIENCE</text>
-  <text x="235" y="322" class="mono ink" font-size="9">Retry Intelligence</text>
-  <text x="235" y="337" class="mono ink" font-size="9">Rollback · Circuit</text>
-  <text x="235" y="352" class="mono ink" font-size="9">Dead Letter · Idempotency</text>
+  <line x1="180" y1="160" x2="180" y2="184" class="wire-soft"/>
+  <line x1="420" y1="160" x2="420" y2="184" class="wire-soft"/>
+  <line x1="680" y1="160" x2="680" y2="184" class="wire-soft"/>
+  <line x1="980" y1="160" x2="980" y2="184" class="wire-soft"/>
 
-  <!-- Governance -->
-  <rect x="406" y="285" width="165" height="85" class="card" rx="6"/>
-  <text x="416" y="305" class="mono accent" font-size="10" font-weight="700">GOVERNANCE</text>
-  <text x="416" y="322" class="mono ink" font-size="9">Approval Gates</text>
-  <text x="416" y="337" class="mono ink" font-size="9">Audit Trail</text>
-  <text x="416" y="352" class="mono ink" font-size="9">Variable Scoping</text>
+  <rect x="70" y="184" width="1060" height="36" rx="7" class="card-dark"/>
+  <text x="600" y="207" text-anchor="middle" class="mono" fill="#f5f4ee" font-size="14" letter-spacing="2.2">MCP STDIO + CLI + FFI SURFACE (124 TOOLS)</text>
 
-  <!-- Template -->
-  <rect x="587" y="285" width="165" height="85" class="card" rx="6"/>
-  <text x="597" y="305" class="mono accent" font-size="10" font-weight="700">TEMPLATE</text>
-  <text x="597" y="322" class="mono ink" font-size="9">Parameterized WF</text>
-  <text x="597" y="337" class="mono ink" font-size="9">Natural Language</text>
-  <text x="597" y="352" class="mono ink" font-size="9">Composition Algebra</text>
+  <line x1="600" y1="220" x2="600" y2="242" class="wire-soft"/>
 
-  <!-- Intelligence -->
-  <rect x="768" y="285" width="165" height="85" class="card" rx="6"/>
-  <text x="778" y="305" class="mono accent" font-size="10" font-weight="700">INTELLIGENCE</text>
-  <text x="778" y="322" class="mono ink" font-size="9">Archaeology · Predict</text>
-  <text x="778" y="337" class="mono ink" font-size="9">Evolution · Dream</text>
-  <text x="778" y="352" class="mono ink" font-size="9">Collective</text>
+  <rect x="70" y="242" width="1060" height="258" rx="12" class="card"/>
+  <text x="92" y="268" class="mono muted" font-size="14" letter-spacing="1.6">AGENTIC-WORKFLOW CORE (Rust)</text>
 
-  <!-- Format -->
-  <rect x="949" y="285" width="210" height="85" class="card" rx="6"/>
-  <text x="959" y="305" class="mono accent" font-size="10" font-weight="700">.awf FORMAT</text>
-  <text x="959" y="322" class="mono ink" font-size="9">Binary · Memory-mappable</text>
-  <text x="959" y="337" class="mono ink" font-size="9">BLAKE3 checksums</text>
-  <text x="959" y="352" class="mono ink" font-size="9">LZ4 compression</text>
+  <rect x="92" y="284" width="200" height="68" rx="8" class="card-accent"/>
+  <text x="192" y="312" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Engine</text>
+  <text x="192" y="334" text-anchor="middle" class="mono muted" font-size="11">DAG + FSM + batch + stream</text>
 
-  <!-- Types layer -->
-  <rect x="44" y="385" width="1115" height="35" fill="#f6ece4" stroke="#111111" stroke-width="1" rx="6"/>
-  <text x="540" y="407" class="mono ink" font-size="11" text-anchor="middle">types/ — Workflow · Execution · Trigger · Schedule · Approval · Audit · Variable · Retry · Rollback · Batch · Stream · FSM · Template · Prediction</text>
+  <rect x="310" y="284" width="200" height="68" rx="8" class="card-accent"/>
+  <text x="410" y="312" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Resilience</text>
+  <text x="410" y="334" text-anchor="middle" class="mono muted" font-size="11">retry + rollback + circuit + dedup</text>
 
-  <!-- Side crates -->
-  <!-- CLI -->
-  <rect x="580" y="148" width="180" height="65" class="card" rx="8"/>
-  <text x="600" y="173" class="mono ink" font-size="12" font-weight="700">agentic-workflow-cli</text>
-  <text x="600" y="193" class="mono muted" font-size="10">awf binary · Clap CLI</text>
+  <rect x="528" y="284" width="200" height="68" rx="8" class="card-accent"/>
+  <text x="628" y="312" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Governance</text>
+  <text x="628" y="334" text-anchor="middle" class="mono muted" font-size="11">approval + audit + variables</text>
 
-  <!-- FFI -->
-  <rect x="780" y="148" width="180" height="65" class="card" rx="8"/>
-  <text x="800" y="173" class="mono ink" font-size="12" font-weight="700">agentic-workflow-ffi</text>
-  <text x="800" y="193" class="mono muted" font-size="10">C FFI · cdylib</text>
+  <rect x="746" y="284" width="200" height="68" rx="8" class="card-accent"/>
+  <text x="846" y="312" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Intelligence</text>
+  <text x="846" y="334" text-anchor="middle" class="mono muted" font-size="11">predict + evolve + archaeology</text>
 
-  <!-- Wires from CLI/FFI to core -->
-  <line x1="670" y1="213" x2="670" y2="243" class="wire"/>
-  <line x1="870" y1="213" x2="870" y2="243" class="wire"/>
+  <rect x="964" y="284" width="144" height="68" rx="8" class="card-accent"/>
+  <text x="1036" y="312" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Template</text>
+  <text x="1036" y="334" text-anchor="middle" class="mono muted" font-size="11">NL + compose</text>
 
-  <!-- Bottom stats -->
-  <text x="24" y="500" class="mono muted" font-size="10">4 crates · 76 files · 9,505 lines Rust · 250 tests · 0 failures</text>
-  <text x="1176" y="500" class="mono accent" font-size="10" text-anchor="end" font-weight="700">v0.1.0</text>
+  <line x1="600" y1="352" x2="600" y2="372" class="wire-accent"/>
+
+  <rect x="92" y="372" width="322" height="66" rx="8" class="card"/>
+  <text x="253" y="398" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Artifact Layer</text>
+  <text x="253" y="419" text-anchor="middle" class="mono muted" font-size="12">portable .awf binary workflow files</text>
+
+  <rect x="438" y="372" width="322" height="66" rx="8" class="card"/>
+  <text x="599" y="398" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Operational Safety</text>
+  <text x="599" y="419" text-anchor="middle" class="mono muted" font-size="12">circuit breaker, idempotency, dead letter</text>
+
+  <rect x="784" y="372" width="324" height="66" rx="8" class="card"/>
+  <text x="946" y="398" text-anchor="middle" class="mono ink" font-size="16" font-weight="700">Integration Surface</text>
+  <text x="946" y="419" text-anchor="middle" class="mono muted" font-size="12">AgenticMemory + AgenticConnect links</text>
+
+  <rect x="92" y="452" width="1016" height="30" rx="6" class="card-dark"/>
+  <text x="600" y="472" text-anchor="middle" class="mono" fill="#f5f4ee" font-size="12" letter-spacing="1.2">24 capabilities · 124 MCP tools · sub-50ms DAG validation · one binary workflow file</text>
+
+  <circle cx="1142" cy="524" r="5" class="accent"/>
 </svg>
