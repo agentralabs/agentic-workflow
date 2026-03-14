@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/github-hero-pane-agentra.svg" alt="AgenticWorkflow hero pane" width="980">
+  <img src="assets/github-hero-pane.svg" alt="AgenticWorkflow hero pane" width="980">
 </p>
 
 <p align="center">
