@@ -12,7 +12,7 @@
   <a href="#install"><img src="https://img.shields.io/badge/cargo_install-agentic--workflow-F59E0B?style=for-the-badge&logo=rust&logoColor=white" alt="cargo install"></a>
   <a href="#mcp-server"><img src="https://img.shields.io/badge/MCP_Server-agentic--workflow--mcp-10B981?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAydjIwTTIgMTJoMjAiLz48L3N2Zz4=&logoColor=white" alt="MCP Server"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge" alt="MIT License"></a>
-  <a href="paper/agenticworkflow-paper.tex"><img src="https://img.shields.io/badge/Research-Paper-8B5CF6?style=for-the-badge" alt="Research Paper"></a>
+  <a href="paper/agenticworkflow-paper.pdf"><img src="https://img.shields.io/badge/Research-Paper-8B5CF6?style=for-the-badge" alt="Research Paper"></a>
   <a href="docs/api-reference.md"><img src="https://img.shields.io/badge/format-.awf-3B82F6?style=for-the-badge" alt=".awf format"></a>
 </p>
 
@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <a href="#problems-solved">Problems Solved</a> · <a href="#quickstart">Quickstart</a> · <a href="#the-24-capabilities">24 Capabilitys</a> · <a href="#how-it-works">How It Works</a> · <a href="#mcp-tools">MCP Tools</a> · <a href="#benchmarks">Benchmarks</a> · <a href="#install">Install</a> · <a href="docs/api-reference.md">API</a> · <a href="paper/agenticworkflow-paper.tex">Paper</a>
+  <a href="#problems-solved">Problems Solved</a> · <a href="#quickstart">Quickstart</a> · <a href="#the-24-capabilities">24 Capabilities</a> · <a href="#how-it-works">How It Works</a> · <a href="#mcp-tools">MCP Tools</a> · <a href="#benchmarks">Benchmarks</a> · <a href="#install">Install</a> · <a href="docs/api-reference.md">API</a> · <a href="paper/agenticworkflow-paper.pdf">Paper</a>
 </p>
 
 ---
@@ -97,11 +97,11 @@ Four steps. One DAG. Approval gate before production. Retry intelligence. Rollba
 
 <a name="the-24-capabilities"></a>
 
-## The 24 Capabilitys
+## The 24 Capabilities
 
 Six categories. Twenty-four capabilities. Every orchestration pattern that exists or will exist.
 
-### Core Engine (Capabilitys 1-4)
+### Core Engine (Capabilities 1-4)
 
 | # | Capability | What it solves |
 |:--|:----------|:---------------|
@@ -110,7 +110,7 @@ Six categories. Twenty-four capabilities. Every orchestration pattern that exist
 | 3 | **Intelligent Scheduling** | Context-aware cron -- skip holidays, respect service health, learn optimal times |
 | 4 | **Trigger Omniscience** | Universal triggers -- file, webhook, schedule, API, workflow output, custom |
 
-### Resilience (Capabilitys 5-8)
+### Resilience (Capabilities 5-8)
 
 | # | Capability | What it solves |
 |:--|:----------|:---------------|
@@ -119,7 +119,7 @@ Six categories. Twenty-four capabilities. Every orchestration pattern that exist
 | 7 | **Circuit Breaker Intelligence** | Workflow-aware breakers -- don't start step 1 if step 3's service is down |
 | 8 | **Dead Letter Intelligence** | Classify failures, auto-retry on recovery, surface actionable summaries |
 
-### Processing (Capabilitys 9-11)
+### Processing (Capabilities 9-11)
 
 | # | Capability | What it solves |
 |:--|:----------|:---------------|
@@ -127,7 +127,7 @@ Six categories. Twenty-four capabilities. Every orchestration pattern that exist
 | 10 | **Stream Processing** | Continuous data -- file watch, webhooks, polling -- with backpressure and windowing |
 | 11 | **Fan-Out / Fan-In** | "Query 5 APIs in parallel, wait for 3, merge results" as a first-class primitive |
 
-### Governance (Capabilitys 12-14)
+### Governance (Capabilities 12-14)
 
 | # | Capability | What it solves |
 |:--|:----------|:---------------|
@@ -135,14 +135,14 @@ Six categories. Twenty-four capabilities. Every orchestration pattern that exist
 | 13 | **Audit Trail** | Structured, queryable events -- who did what, when, to which resource |
 | 14 | **Idempotency** | Built-in deduplication -- never send duplicate emails or double-charge |
 
-### State (Capabilitys 15-16)
+### State (Capabilities 15-16)
 
 | # | Capability | What it solves |
 |:--|:----------|:---------------|
 | 15 | **State Machine Engine** | First-class FSM -- Created → Paid → Shipped → Delivered with guard conditions |
 | 16 | **Variable Scoping** | Hierarchical scope -- workflow → branch → step → iteration, with type checking |
 
-### Intelligence (Capabilitys 17-24)
+### Intelligence (Capabilities 17-24)
 
 | # | Capability | What it solves |
 |:--|:----------|:---------------|
@@ -406,7 +406,7 @@ Each section independently BLAKE3-checksummed. Corruption in one section doesn't
 | **Total** | **281** | All passing |
 
 **One research paper:**
-- [AgenticWorkflow: A Universal Orchestration Engine for Agent Coordination via MCP (LaTeX)](paper/agenticworkflow-paper.tex)
+- [AgenticWorkflow: A Universal Orchestration Engine for Agent Coordination via MCP (5 pages, 7 tables)](paper/agenticworkflow-paper.pdf)
 
 ---
 

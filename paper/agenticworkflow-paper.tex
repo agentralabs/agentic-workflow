@@ -51,7 +51,7 @@ We present AgenticWorkflow, a universal orchestration engine that coordinates wo
 The engine introduces 24 capabilities spanning execution, resilience, governance, state management, templates, and intelligence, exposed through 124 MCP (Model Context Protocol) tools.
 Unlike existing orchestration systems (Airflow, Temporal, GitHub Actions, Zapier), AgenticWorkflow is AI-native: agents can create, modify, reason about, and optimize workflows at runtime.
 All state persists in a single \texttt{.awf} binary file format with BLAKE3 integrity verification and LZ4 compression.
-The implementation comprises 9,505 lines of Rust across 4 crates, with 250 tests achieving 0 failures.
+The implementation comprises 9,505 lines of Rust across 4 crates, with 281 tests achieving 0 failures.
 Stress testing validates DAG operations on 1,000-step graphs in $<$50ms, 10,000-item batch creation in $<$500ms, and 1,000 FSM transitions in $<$100ms on Apple ARM64 hardware.
 The system is fully open-source under the MIT license.
 \end{abstract}
@@ -216,7 +216,7 @@ After $N$ failures (configurable threshold), the circuit opens and all requests 
 \end{cases}
 \end{equation}
 
-\textbf{Validated by:} \texttt{test\_circuit\_breaker\_opens\_after\_threshold}, \texttt{stress\_circuit\_breaker\_rapid\_failures} (1K failures $<$500ms).
+\textbf{Validated by:} \mbox{\texttt{test\_circuit\_breaker\_opens\_after\_threshold}}, \mbox{\texttt{stress\_circuit\_breaker\_rapid\_failures}} (1K failures $<$500ms).
 
 \subsection{Governance Layer}
 
@@ -327,7 +327,7 @@ Unknown tools return error code $-32803$ (\texttt{TOOL\_NOT\_FOUND}).
 
 \subsection{Test Coverage}
 
-250 tests organized in 7 phases plus inline unit tests:
+281 tests organized in 9 phases plus inline unit tests:
 
 \begin{table}[h]
 \centering
@@ -339,15 +339,17 @@ Unknown tools return error code $-32803$ (\texttt{TOOL\_NOT\_FOUND}).
 \textbf{Phase} & \textbf{Focus} & \textbf{Tests} \\
 \midrule
 Phase 1 & Type system, serde, variants     & 59 \\
-Phase 2 & Engine operations (DAG, FSM, ...) & 31 \\
-Phase 3 & Resilience (retry, rollback, ...) & 27 \\
-Phase 4 & Governance (approval, audit, ...) & 34 \\
+Phase 2 & Engine operations (DAG, FSM, \ldots) & 31 \\
+Phase 3 & Resilience (retry, rollback, \ldots) & 27 \\
+Phase 4 & Governance (approval, audit, \ldots) & 27 \\
 Phase 5 & Template + Intelligence           & 31 \\
 Phase 6 & Edge cases + error paths          & 28 \\
 Phase 7 & Stress tests (1K--10K scale)      & 14 \\
-Inline  & Unit tests in source modules      & 26 \\
+Phase 8 & Persistence + step execution      & 39 \\
+Phase 9 & Concurrent access                 & 11 \\
+Inline  & Unit tests in source modules      & 14 \\
 \midrule
-\textbf{Total} & & \textbf{250} \\
+\textbf{Total} & & \textbf{281} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -390,25 +392,24 @@ Variable scope cascade         & 1,000 depth   & instant \\
 \caption{Every paper claim is backed by a named, passing test.}
 \label{tab:traceability}
 \scriptsize
-\begin{tabular}{p{3.8cm}p{3.8cm}}
+\begin{tabular}{p{2.8cm}p{4.2cm}}
 \toprule
 \textbf{Paper Claim} & \textbf{Validating Test} \\
 \midrule
-$O(V+E)$ cycle detection & \texttt{test\_dag\_cycle\_detection} \\
-Exponential backoff capped & \texttt{test\_retry\_strategy\_exponential\_backoff} \\
-Reverse-order rollback & \texttt{test\_rollback\_preview\_full\_reverse\_order} \\
-Circuit opens after $N$ fails & \texttt{test\_circuit\_breaker\_opens\_after\_threshold} \\
-BLAKE3 corruption detection & \texttt{test\_edge\_awf\_corrupt\_checksum} \\
-1K-step DAG in $<$50ms & \texttt{stress\_dag\_1000\_steps\_linear\_chain} \\
-10K batch in $<$500ms & \texttt{stress\_batch\_10k\_items} \\
-1K FSM transitions $<$100ms & \texttt{stress\_fsm\_1000\_transitions} \\
-Variable cascade 1K depth & \texttt{stress\_variable\_1000\_scopes} \\
-Anomaly detection 1K execs & \texttt{stress\_archaeology\_1000\_fingerprints} \\
-Drift detection (1.5$\times$) & \texttt{test\_evolution\_drift\_detection} \\
-Privacy verification & \texttt{test\_collective\_privacy\_detect\_secrets} \\
+Cycle detection & \texttt{test\_dag\_cycle\_detection} \\
+Backoff capped & \texttt{test\_retry\_strategy\_exponential\_backoff} \\
+Reverse rollback & \texttt{test\_rollback\_preview\_full\_reverse\_order} \\
+Circuit opens & \texttt{test\_circuit\_breaker\_opens\_after\_threshold} \\
+Corrupt detect & \texttt{test\_edge\_awf\_corrupt\_checksum} \\
+1K DAG $<$50ms & \texttt{stress\_dag\_1000\_steps\_linear\_chain} \\
+10K batch $<$500ms & \texttt{stress\_batch\_10k\_items} \\
+1K FSM $<$100ms & \texttt{stress\_fsm\_1000\_transitions} \\
+1K var cascade & \texttt{stress\_variable\_1000\_scopes} \\
+Anomaly detect & \texttt{stress\_archaeology\_1000\_fingerprints} \\
+Drift 1.5$\times$ & \texttt{test\_evolution\_drift\_detection} \\
+Privacy check & \texttt{test\_collective\_privacy\_detect\_secrets} \\
 Unicode support & \texttt{test\_unicode\_in\_step\_names} \\
-Immutability enforcement & \texttt{test\_edge\_variable\_immutable\_reject} \\
-Approval chain escalation & \texttt{test\_approval\_escalate\_to\_next} \\
+Immutability & \texttt{test\_edge\_variable\_immutable\_reject} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -457,7 +458,7 @@ The resilience layer (retry, rollback, circuit breaker, dead letter, idempotency
 The governance layer (approval gates, audit trails, variable scoping) enables enterprise compliance.
 The intelligence layer (archaeology, prediction, evolution, dream) enables continuous workflow optimization.
 
-With 9,505 lines of Rust, 250 tests (0 failures), and sub-second performance at 10K scale, AgenticWorkflow demonstrates that comprehensive orchestration can be delivered as a lightweight, portable, AI-native library.
+With 9,505 lines of Rust, 281 tests (0 failures), and sub-second performance at 10K scale, AgenticWorkflow demonstrates that comprehensive orchestration can be delivered as a lightweight, portable, AI-native library.
 
 \paragraph{Availability.}
 Open-source under MIT license at \url{https://github.com/agentralabs/agentic-workflow}.
