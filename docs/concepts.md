@@ -19,9 +19,9 @@ A step is the atomic unit of execution. Each step has:
 
 AgenticWorkflow uses `.awf` (Agentic Workflow Format) -- a YAML-based declarative format. Files are human-readable, version-controlled, and composable.
 
-## Inventions
+## Capabilitys
 
-The 24 inventions are the composable primitives that power AgenticWorkflow. Each invention is a standalone module (workflow engine, step registry, dependency resolver, etc.) that can be used independently or composed together.
+The 24 capabilitys are the composable primitives that power AgenticWorkflow. Each capability is a standalone module (workflow engine, step registry, dependency resolver, etc.) that can be used independently or composed together.
 
 ## Templates
 
@@ -41,4 +41,4 @@ Shared resources (database connections, API rate limits, file locks) can be mana
 
 ## MCP Integration
 
-All 24 inventions are exposed as MCP tools, making AgenticWorkflow usable from any MCP-compatible AI agent without writing code.
+All 24 capabilitys are exposed as MCP tools, making AgenticWorkflow usable from any MCP-compatible AI agent without writing code.

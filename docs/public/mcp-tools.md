@@ -1,6 +1,6 @@
 # MCP Tools Reference
 
-AgenticWorkflow exposes 124 MCP tools across 24 invention categories.
+AgenticWorkflow exposes 124 MCP tools across 24 capability categories.
 
 ## Workflow Lifecycle (12 tools)
 

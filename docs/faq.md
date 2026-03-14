@@ -51,7 +51,7 @@ Enable checkpointing with `--checkpoint`, then resume with `awf run --resume <ex
 
 ### How many MCP tools are available?
 
-124 tools across 24 invention categories.
+124 tools across 24 capability categories.
 
 ### Can I use AgenticWorkflow with Claude, Cursor, or other MCP clients?
 

@@ -5,7 +5,7 @@
 ```
 agentic-workflow/
   crates/
-    agentic-workflow-core/     # Core engine, inventions, .awf parser
+    agentic-workflow-core/     # Core engine, capabilitys, .awf parser
     agentic-workflow-mcp/      # MCP server (124 tools)
     agentic-workflow-cli/      # CLI binary (awf)
     agentic-workflow-ffi/      # C FFI bindings
@@ -17,7 +17,7 @@ agentic-workflow/
 
 ### agentic-workflow-core
 
-The foundation crate containing all 24 inventions. Pure logic with no I/O dependencies. Includes:
+The foundation crate containing all 24 capabilitys. Pure logic with no I/O dependencies. Includes:
 
 - Workflow engine with DAG-based step scheduling
 - .awf file format parser and serializer
@@ -35,7 +35,7 @@ The foundation crate containing all 24 inventions. Pure logic with no I/O depend
 MCP stdio server wrapping all core functionality into 124 tools. Handles:
 
 - JSON-RPC 2.0 protocol over stdin/stdout
-- Tool dispatch to core invention modules
+- Tool dispatch to core capability modules
 - Resource exposure for workflow state inspection
 - Input validation with explicit error responses
 - Token-based auth gating for server profile

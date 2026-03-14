@@ -48,7 +48,7 @@ Agentra Labs\\
 % ============================================================
 \begin{abstract}
 We present AgenticWorkflow, a universal orchestration engine that coordinates workflows, pipelines, state machines, batch processing, and every coordination pattern through a single system.
-The engine introduces 24 inventions spanning execution, resilience, governance, state management, templates, and intelligence, exposed through 124 MCP (Model Context Protocol) tools.
+The engine introduces 24 capabilities spanning execution, resilience, governance, state management, templates, and intelligence, exposed through 124 MCP (Model Context Protocol) tools.
 Unlike existing orchestration systems (Airflow, Temporal, GitHub Actions, Zapier), AgenticWorkflow is AI-native: agents can create, modify, reason about, and optimize workflows at runtime.
 All state persists in a single \texttt{.awf} binary file format with BLAKE3 integrity verification and LZ4 compression.
 The implementation comprises 9,505 lines of Rust across 4 crates, with 250 tests achieving 0 failures.
@@ -72,13 +72,13 @@ Current orchestration tools are specialized:
 
 None provides: (a) all coordination patterns in a single engine, (b) AI-native creation and reasoning, (c) zero-infrastructure local execution, and (d) resilience primitives (retry intelligence, rollback architecture, circuit breakers) as first-class features.
 
-AgenticWorkflow fills this gap with 24 inventions organized into six categories (Table~\ref{tab:inventions}).
+AgenticWorkflow fills this gap with 24 capabilities organized into six categories (Table~\ref{tab:capabilities}).
 Every capability is accessible through 124 MCP tools, enabling any MCP-compatible agent (Claude, Cursor, Windsurf, Cody) to orchestrate workflows without custom integration.
 
 \paragraph{Contributions.}
 \begin{enumerate}[nosep]
   \item A universal DAG engine supporting linear, parallel, conditional, and loop patterns with $O(V + E)$ cycle detection.
-  \item Five resilience inventions: failure-classified retry, per-step rollback with verification, workflow-aware circuit breakers, intelligent dead letter management, and built-in idempotency.
+  \item Five resilience capabilities: failure-classified retry, per-step rollback with verification, workflow-aware circuit breakers, intelligent dead letter management, and built-in idempotency.
   \item A governance layer with approval gates (escalation chains, time-bounded, conditional), structured queryable audit trails, and hierarchical variable scoping.
   \item Intelligence systems: execution archaeology (comparison, anomaly detection, bottleneck analysis), predictive execution, workflow evolution monitoring, and dream-state maintenance.
   \item The \texttt{.awf} binary file format: memory-mappable, BLAKE3-checksummed, LZ4-compressed, containing all workflow state in a single portable file.
@@ -141,18 +141,18 @@ AgenticWorkflow is implemented as a Rust workspace with four crates:
   \item \textbf{agentic-workflow-ffi}: C FFI bindings for cross-language integration.
 \end{itemize}
 
-\subsection{The 24 Inventions}
+\subsection{The 24 Capabilitys}
 
-Table~\ref{tab:inventions} organizes the 24 inventions into six categories.
+Table~\ref{tab:capabilities} organizes the 24 capabilities into six categories.
 
 \begin{table}[h]
 \centering
-\caption{24 inventions organized by category.}
-\label{tab:inventions}
+\caption{24 capabilities organized by category.}
+\label{tab:capabilities}
 \scriptsize
 \begin{tabular}{lll}
 \toprule
-\textbf{Category} & \textbf{\#} & \textbf{Inventions} \\
+\textbf{Category} & \textbf{\#} & \textbf{Capabilitys} \\
 \midrule
 Core         & 4  & DAG Engine, Execution Consciousness, \\
              &    & Intelligent Scheduling, Trigger Omniscience \\
@@ -290,16 +290,16 @@ LZ4 compression is available for content blocks.
 % ============================================================
 \section{MCP Tool Surface}
 
-AgenticWorkflow exposes 124 MCP tools organized by invention:
+AgenticWorkflow exposes 124 MCP tools organized by capability:
 
 \begin{table}[h]
 \centering
-\caption{MCP tool distribution across 24 inventions.}
+\caption{MCP tool distribution across 24 capabilities.}
 \label{tab:tools}
 \scriptsize
 \begin{tabular}{lr|lr}
 \toprule
-\textbf{Invention} & \textbf{Tools} & \textbf{Invention} & \textbf{Tools} \\
+\textbf{Capability} & \textbf{Tools} & \textbf{Capability} & \textbf{Tools} \\
 \midrule
 DAG Engine       & 6  & Approval Gates   & 6 \\
 Execution        & 8  & Audit Trail      & 5 \\
@@ -452,7 +452,7 @@ AgenticWorkflow follows the Agentra sister-first development model: before imple
 \section{Conclusion}
 
 AgenticWorkflow provides a universal orchestration engine that unifies DAGs, state machines, batch processing, stream processing, and fan-out/fan-in in a single system.
-Its 24 inventions and 124 MCP tools enable any AI agent to create, execute, monitor, and optimize workflows without custom integration.
+Its 24 capabilities and 124 MCP tools enable any AI agent to create, execute, monitor, and optimize workflows without custom integration.
 The resilience layer (retry, rollback, circuit breaker, dead letter, idempotency) ensures production-grade durability.
 The governance layer (approval gates, audit trails, variable scoping) enables enterprise compliance.
 The intelligence layer (archaeology, prediction, evolution, dream) enables continuous workflow optimization.
