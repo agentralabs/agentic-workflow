@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 420" width="1400" height="420">
+  <defs>
+    <pattern id="dotgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#c8c5bb"/>
+    </pattern>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace; }
+      .ink { fill: #121212; }
+      .muted { fill: #6d6a63; }
+      .accent { fill: #ea580c; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="420" fill="#f2f1ea"/>
+  <rect width="1400" height="420" fill="url(#dotgrid)"/>
+
+  <!-- Header line -->
+  <line x1="24" y1="34" x2="1376" y2="34" stroke="#1f1f1f" stroke-width="1"/>
+
+  <!-- Title block -->
+  <text x="48" y="28" class="mono muted" font-size="11" letter-spacing="2.2">AGENTRA LABS</text>
+  <text x="48" y="100" class="mono ink" font-size="42" font-weight="700" letter-spacing="-0.5">AgenticWorkflow</text>
+  <text x="48" y="140" class="mono muted" font-size="18">Universal Orchestration Engine</text>
+  <text x="48" y="175" class="mono muted" font-size="13">24 inventions · 124 MCP tools · .awf format</text>
+
+  <!-- Accent line -->
+  <rect x="48" y="195" width="80" height="3" fill="#ea580c" rx="1"/>
+
+  <!-- Feature cards -->
+  <!-- Card 1: DAG -->
+  <rect x="48" y="220" width="200" height="110" fill="#fbfaf4" stroke="#1f1f1f" stroke-width="1.6" rx="8"/>
+  <text x="68" y="250" class="mono accent" font-size="11" font-weight="700" letter-spacing="1.5">DAG ENGINE</text>
+  <text x="68" y="272" class="mono ink" font-size="12">Validate · Execute</text>
+  <text x="68" y="292" class="mono ink" font-size="12">Topological Sort</text>
+  <text x="68" y="312" class="mono muted" font-size="11">Cycle detection</text>
+
+  <!-- Card 2: Resilience -->
+  <rect x="268" y="220" width="200" height="110" fill="#fbfaf4" stroke="#1f1f1f" stroke-width="1.6" rx="8"/>
+  <text x="288" y="250" class="mono accent" font-size="11" font-weight="700" letter-spacing="1.5">RESILIENCE</text>
+  <text x="288" y="272" class="mono ink" font-size="12">Retry · Rollback</text>
+  <text x="288" y="292" class="mono ink" font-size="12">Circuit Breaker</text>
+  <text x="288" y="312" class="mono muted" font-size="11">Dead letter queue</text>
+
+  <!-- Card 3: Governance -->
+  <rect x="488" y="220" width="200" height="110" fill="#fbfaf4" stroke="#1f1f1f" stroke-width="1.6" rx="8"/>
+  <text x="508" y="250" class="mono accent" font-size="11" font-weight="700" letter-spacing="1.5">GOVERNANCE</text>
+  <text x="508" y="272" class="mono ink" font-size="12">Approval Gates</text>
+  <text x="508" y="292" class="mono ink" font-size="12">Audit Trail</text>
+  <text x="508" y="312" class="mono muted" font-size="11">Variable scoping</text>
+
+  <!-- Card 4: Intelligence -->
+  <rect x="708" y="220" width="200" height="110" fill="#fbfaf4" stroke="#1f1f1f" stroke-width="1.6" rx="8"/>
+  <text x="728" y="250" class="mono accent" font-size="11" font-weight="700" letter-spacing="1.5">INTELLIGENCE</text>
+  <text x="728" y="272" class="mono ink" font-size="12">Predict · Evolve</text>
+  <text x="728" y="292" class="mono ink" font-size="12">Archaeology</text>
+  <text x="728" y="312" class="mono muted" font-size="11">Dream maintenance</text>
+
+  <!-- Right panel: Terminal preview -->
+  <rect x="940" y="55" width="430" height="340" fill="#0f0f10" stroke="#1f1f1f" stroke-width="2" rx="10"/>
+  <rect x="940" y="55" width="430" height="30" fill="#2a2825" rx="10"/>
+  <rect x="940" y="75" width="430" height="10" fill="#2a2825"/>
+  <!-- Terminal dots -->
+  <circle cx="960" cy="70" r="5" fill="#ea580c" opacity="0.9"/>
+  <circle cx="978" cy="70" r="5" fill="#6d6a63" opacity="0.5"/>
+  <circle cx="996" cy="70" r="5" fill="#6d6a63" opacity="0.5"/>
+  <text x="1060" y="74" class="mono" fill="#d8d4cb" font-size="11">agentic-workflow-mcp</text>
+
+  <!-- Terminal content -->
+  <text x="960" y="115" class="mono" fill="#ea580c" font-size="12">$</text>
+  <text x="975" y="115" class="mono" fill="#f4f2eb" font-size="12">awf create "deploy-pipeline"</text>
+  <text x="960" y="140" class="mono" fill="#6d6a63" font-size="11">Created workflow: deploy-pipeline</text>
+
+  <text x="960" y="170" class="mono" fill="#ea580c" font-size="12">$</text>
+  <text x="975" y="170" class="mono" fill="#f4f2eb" font-size="12">awf validate deploy-pipeline</text>
+  <text x="960" y="195" class="mono" fill="#6d6a63" font-size="11">✓ DAG valid · 5 steps · 4 edges</text>
+
+  <text x="960" y="225" class="mono" fill="#ea580c" font-size="12">$</text>
+  <text x="975" y="225" class="mono" fill="#f4f2eb" font-size="12">awf run deploy-pipeline</text>
+  <text x="960" y="250" class="mono" fill="#6d6a63" font-size="11">Execution started: exec-a1b2c3</text>
+  <text x="960" y="270" class="mono" fill="#6d6a63" font-size="11">Step 1/5: Build .......... ✓</text>
+  <text x="960" y="290" class="mono" fill="#6d6a63" font-size="11">Step 2/5: Test ........... ✓</text>
+  <text x="960" y="310" class="mono" fill="#ea580c" font-size="11">Step 3/5: Approve ........ ⏳</text>
+  <text x="960" y="330" class="mono" fill="#6d6a63" font-size="11">Step 4/5: Deploy ......... pending</text>
+  <text x="960" y="350" class="mono" fill="#6d6a63" font-size="11">Step 5/5: Notify ......... pending</text>
+
+  <text x="960" y="380" class="mono" fill="#6d6a63" font-size="10">Progress: 40% · ETA: 12 min</text>
+
+  <!-- Bottom stats -->
+  <text x="48" y="365" class="mono muted" font-size="11">MIT License</text>
+  <text x="48" y="385" class="mono muted" font-size="11">Works with Claude · Cursor · Windsurf · Cody · any MCP client</text>
+  <text x="48" y="405" class="mono accent" font-size="11" font-weight="700">agentralabs.tech</text>
+</svg>

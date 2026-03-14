@@ -1,0 +1,25 @@
+[package]
+name = "agentic-workflow-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "FFI bindings for AgenticWorkflow — C, Python, and WASM access to workflow orchestration"
+homepage = "https://agentralabs.tech"
+keywords = ["ffi", "workflow", "orchestration", "bindings"]
+categories = ["api-bindings"]
+
+[lib]
+name = "agentic_workflow_ffi"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+agentic-workflow = { version = "0.1.0", path = "../agentic-workflow", features = ["ffi"] }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

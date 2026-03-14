@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 420" width="980" height="420">
+  <defs>
+    <pattern id="dotgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#c8c5bb"/>
+    </pattern>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace; }
+    </style>
+  </defs>
+
+  <rect width="980" height="420" fill="#f2f1ea"/>
+  <rect width="980" height="420" fill="url(#dotgrid)"/>
+
+  <!-- Terminal window -->
+  <rect x="24" y="24" width="932" height="372" fill="#0f0f10" stroke="#1f1f1f" stroke-width="2" rx="10"/>
+  <rect x="24" y="24" width="932" height="30" fill="#2a2825" rx="10"/>
+  <rect x="24" y="44" width="932" height="10" fill="#2a2825"/>
+  <circle cx="44" cy="39" r="5" fill="#ea580c" opacity="0.9"/>
+  <circle cx="62" cy="39" r="5" fill="#6d6a63" opacity="0.5"/>
+  <circle cx="80" cy="39" r="5" fill="#6d6a63" opacity="0.5"/>
+  <text x="420" y="43" class="mono" fill="#d8d4cb" font-size="11" text-anchor="middle">AgenticWorkflow — MCP Tools</text>
+
+  <!-- Install command -->
+  <text x="44" y="80" class="mono" fill="#ea580c" font-size="12">$</text>
+  <text x="59" y="80" class="mono" fill="#f4f2eb" font-size="12">curl -fsSL https://agentralabs.tech/install/workflow | bash</text>
+
+  <!-- Separator -->
+  <line x1="44" y1="96" x2="936" y2="96" stroke="#2a2825" stroke-width="1"/>
+
+  <!-- MCP tool calls -->
+  <text x="44" y="118" class="mono" fill="#6d6a63" font-size="11">── workflow_create ──</text>
+  <text x="44" y="138" class="mono" fill="#ea580c" font-size="11">→</text>
+  <text x="60" y="138" class="mono" fill="#f4f2eb" font-size="11">workflow_create { name: "daily-report", description: "Generate daily metrics" }</text>
+  <text x="44" y="158" class="mono" fill="#6d6a63" font-size="11">← { workflow_id: "wf-a1b2c3", steps: 0, status: "created" }</text>
+
+  <text x="44" y="185" class="mono" fill="#6d6a63" font-size="11">── workflow_step_add ──</text>
+  <text x="44" y="205" class="mono" fill="#ea580c" font-size="11">→</text>
+  <text x="60" y="205" class="mono" fill="#f4f2eb" font-size="11">workflow_step_add { workflow_id: "wf-a1b2c3", name: "Query DB", type: "mcp_tool" }</text>
+  <text x="44" y="225" class="mono" fill="#6d6a63" font-size="11">← { step_id: "s-d4e5f6", position: 1 }</text>
+
+  <text x="44" y="252" class="mono" fill="#6d6a63" font-size="11">── workflow_run ──</text>
+  <text x="44" y="272" class="mono" fill="#ea580c" font-size="11">→</text>
+  <text x="60" y="272" class="mono" fill="#f4f2eb" font-size="11">workflow_run { workflow_id: "wf-a1b2c3" }</text>
+  <text x="44" y="292" class="mono" fill="#6d6a63" font-size="11">← { execution_id: "ex-g7h8i9", status: "running", steps_total: 3 }</text>
+
+  <text x="44" y="319" class="mono" fill="#6d6a63" font-size="11">── workflow_progress ──</text>
+  <text x="44" y="339" class="mono" fill="#ea580c" font-size="11">→</text>
+  <text x="60" y="339" class="mono" fill="#f4f2eb" font-size="11">workflow_progress { execution_id: "ex-g7h8i9" }</text>
+  <text x="44" y="359" class="mono" fill="#6d6a63" font-size="11">← { completed: 2, total: 3, percent: 66.7, eta_ms: 45000 }</text>
+
+  <!-- Bottom status -->
+  <text x="44" y="385" class="mono" fill="#ea580c" font-size="10" font-weight="700">124 TOOLS</text>
+  <text x="150" y="385" class="mono" fill="#6d6a63" font-size="10">24 inventions · DAG · FSM · Batch · Stream · Approval · Audit · Retry · Rollback</text>
+</svg>

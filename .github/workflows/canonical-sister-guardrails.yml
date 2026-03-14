@@ -1,0 +1,25 @@
+name: Canonical Sister Guardrails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - 'scripts/check-canonical-sister.sh'
+      - '.github/workflows/canonical-sister-guardrails.yml'
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - 'scripts/check-canonical-sister.sh'
+      - '.github/workflows/canonical-sister-guardrails.yml'
+
+jobs:
+  check:
+    name: Canonical Sister Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run canonical sister guardrail
+        run: bash scripts/check-canonical-sister.sh

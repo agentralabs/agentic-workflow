@@ -1,0 +1,52 @@
+[package]
+name = "agentic-workflow"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Universal orchestration engine — workflows, pipelines, state machines, batch processing, and every coordination pattern"
+homepage = "https://agentralabs.tech"
+keywords = ["workflow", "orchestration", "dag", "pipeline", "mcp"]
+categories = ["development-tools", "asynchronous"]
+
+[lib]
+name = "agentic_workflow"
+path = "src/lib.rs"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# UUID generation
+uuid = { version = "1.6", features = ["v4"] }
+
+# Hashing (BLAKE3 checksums for .awf format)
+blake3 = "1.5"
+
+# Compression (LZ4 for .awf format)
+lz4_flex = { version = "0.11", optional = true }
+
+# Memory mapping
+memmap2 = { version = "0.9", optional = true }
+
+# Cron parsing
+cron = { version = "0.12", optional = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio-test = "0.4"
+
+[features]
+default = ["format", "schedule"]
+format = ["lz4_flex", "memmap2"]
+schedule = ["cron"]
+ffi = ["format"]

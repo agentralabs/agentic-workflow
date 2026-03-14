@@ -1,0 +1,30 @@
+[package]
+name = "agentic-workflow-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "CLI for AgenticWorkflow — manage workflows, schedules, and executions from the terminal"
+homepage = "https://agentralabs.tech"
+keywords = ["cli", "workflow", "orchestration", "pipeline"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+agentic-workflow = { version = "0.1.0", path = "../agentic-workflow" }
+agentic-workflow-mcp = { version = "0.1.0", path = "../agentic-workflow-mcp" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+clap = { version = "4.4", features = ["derive"] }
+clap_complete = "4.4"
+anyhow = "1.0"
+
+[[bin]]
+name = "awf"
+path = "src/main.rs"

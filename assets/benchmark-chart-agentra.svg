@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 440" width="980" height="440">
+  <defs>
+    <pattern id="dotgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#c8c5bb"/>
+    </pattern>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace; }
+      .ink { fill: #121212; }
+      .muted { fill: #6d6a63; }
+      .accent { fill: #ea580c; }
+    </style>
+  </defs>
+
+  <rect width="980" height="440" fill="#f2f1ea"/>
+  <rect width="980" height="440" fill="url(#dotgrid)"/>
+
+  <!-- Title -->
+  <text x="24" y="28" class="mono muted" font-size="11" letter-spacing="2">PERFORMANCE BENCHMARKS</text>
+  <line x1="24" y1="38" x2="956" y2="38" stroke="#1f1f1f" stroke-width="1"/>
+  <text x="24" y="60" class="mono muted" font-size="10">Apple M-series ARM64 · Rust 1.82 · Release build</text>
+
+  <!-- Benchmark bars -->
+  <!-- Y axis labels -->
+  <text x="250" y="95" class="mono ink" font-size="11" text-anchor="end">DAG 1K steps validate</text>
+  <text x="250" y="125" class="mono ink" font-size="11" text-anchor="end">DAG 1K topo sort</text>
+  <text x="250" y="155" class="mono ink" font-size="11" text-anchor="end">100 executions start</text>
+  <text x="250" y="185" class="mono ink" font-size="11" text-anchor="end">10K batch create</text>
+  <text x="250" y="215" class="mono ink" font-size="11" text-anchor="end">10K dead letters</text>
+  <text x="250" y="245" class="mono ink" font-size="11" text-anchor="end">10K idempotency store</text>
+  <text x="250" y="275" class="mono ink" font-size="11" text-anchor="end">10K idempotency check</text>
+  <text x="250" y="305" class="mono ink" font-size="11" text-anchor="end">10K audit events</text>
+  <text x="250" y="335" class="mono ink" font-size="11" text-anchor="end">1K FSM transitions</text>
+  <text x="250" y="365" class="mono ink" font-size="11" text-anchor="end">100 .awf write+read</text>
+  <text x="250" y="395" class="mono ink" font-size="11" text-anchor="end">1K anomaly detection</text>
+
+  <!-- Bars (scale: 1px = 2ms, max bar = 600px) -->
+  <!-- DAG 1K validate: <50ms -->
+  <rect x="260" y="82" width="25" height="18" fill="#121212" rx="2"/>
+  <text x="295" y="95" class="mono muted" font-size="10">&lt;50ms</text>
+
+  <!-- DAG 1K topo: <50ms -->
+  <rect x="260" y="112" width="25" height="18" fill="#121212" rx="2"/>
+  <text x="295" y="125" class="mono muted" font-size="10">&lt;50ms</text>
+
+  <!-- 100 exec start: <100ms -->
+  <rect x="260" y="142" width="50" height="18" fill="#121212" rx="2"/>
+  <text x="320" y="155" class="mono muted" font-size="10">&lt;100ms</text>
+
+  <!-- 10K batch: <500ms -->
+  <rect x="260" y="172" width="150" height="18" fill="#4f4a43" rx="2"/>
+  <text x="420" y="185" class="mono muted" font-size="10">&lt;500ms</text>
+
+  <!-- 10K dead letters: <500ms -->
+  <rect x="260" y="202" width="150" height="18" fill="#4f4a43" rx="2"/>
+  <text x="420" y="215" class="mono muted" font-size="10">&lt;500ms</text>
+
+  <!-- 10K idempotency store: <500ms -->
+  <rect x="260" y="232" width="120" height="18" fill="#4f4a43" rx="2"/>
+  <text x="390" y="245" class="mono muted" font-size="10">&lt;500ms</text>
+
+  <!-- 10K idempotency check: <200ms -->
+  <rect x="260" y="262" width="60" height="18" fill="#121212" rx="2"/>
+  <text x="330" y="275" class="mono muted" font-size="10">&lt;200ms</text>
+
+  <!-- 10K audit: <500ms -->
+  <rect x="260" y="292" width="150" height="18" fill="#4f4a43" rx="2"/>
+  <text x="420" y="305" class="mono muted" font-size="10">&lt;500ms</text>
+
+  <!-- 1K FSM: <100ms -->
+  <rect x="260" y="322" width="50" height="18" fill="#121212" rx="2"/>
+  <text x="320" y="335" class="mono muted" font-size="10">&lt;100ms</text>
+
+  <!-- 100 .awf: <200ms -->
+  <rect x="260" y="352" width="60" height="18" fill="#121212" rx="2"/>
+  <text x="330" y="365" class="mono muted" font-size="10">&lt;200ms</text>
+
+  <!-- 1K anomaly: <100ms -->
+  <rect x="260" y="382" width="50" height="18" fill="#121212" rx="2"/>
+  <text x="320" y="395" class="mono muted" font-size="10">&lt;100ms</text>
+
+  <!-- Legend -->
+  <rect x="700" y="80" width="240" height="90" fill="#fbfaf4" stroke="#1f1f1f" stroke-width="1" rx="6"/>
+  <rect x="720" y="98" width="20" height="10" fill="#121212" rx="2"/>
+  <text x="748" y="108" class="mono ink" font-size="10">&lt;100ms (interactive)</text>
+  <rect x="720" y="118" width="20" height="10" fill="#4f4a43" rx="2"/>
+  <text x="748" y="128" class="mono ink" font-size="10">&lt;500ms (batch)</text>
+  <rect x="720" y="138" width="20" height="10" fill="#ea580c" rx="2"/>
+  <text x="748" y="148" class="mono ink" font-size="10">&gt;500ms (heavy)</text>
+
+  <!-- Bottom note -->
+  <text x="24" y="430" class="mono accent" font-size="10" font-weight="700">250 tests · 0 failures</text>
+  <text x="250" y="430" class="mono muted" font-size="10">All stress tests pass within stated time budgets</text>
+</svg>

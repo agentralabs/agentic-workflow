@@ -1,0 +1,41 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/agentic-workflow",
+    "crates/agentic-workflow-mcp",
+    "crates/agentic-workflow-cli",
+    "crates/agentic-workflow-ffi",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/agentralabs/agentic-workflow"
+authors = ["Agentra Labs <contact@agentralabs.tech>"]
+
+[workspace.dependencies]
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+
+# Testing
+tempfile = "3"
+
+# SDK (shared traits for all sisters)
+agentic-sdk = { version = "0.2.0", path = "../agentic-sdk" }
+
+# Internal crates
+agentic-workflow = { path = "crates/agentic-workflow" }
+agentic-workflow-mcp = { path = "crates/agentic-workflow-mcp" }
+agentic-workflow-cli = { path = "crates/agentic-workflow-cli" }
+agentic-workflow-ffi = { path = "crates/agentic-workflow-ffi" }

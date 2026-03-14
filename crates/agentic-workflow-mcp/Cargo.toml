@@ -1,0 +1,52 @@
+[package]
+name = "agentic-workflow-mcp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "MCP server for AgenticWorkflow — universal LLM access to workflow orchestration"
+homepage = "https://agentralabs.tech"
+keywords = ["mcp", "workflow", "orchestration", "agent", "ai"]
+categories = ["development-tools", "asynchronous"]
+
+[dependencies]
+agentic-workflow = { version = "0.1.0", path = "../agentic-workflow" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+clap = { version = "4.4", features = ["derive"] }
+toml = "0.8"
+thiserror = "1.0"
+anyhow = "1.0"
+uuid = { version = "1.6", features = ["v4"] }
+blake3 = "1.5"
+dirs = "5.0"
+
+# HTTP server for SSE transport (optional)
+axum = { version = "0.7", optional = true }
+tower = { version = "0.4", optional = true }
+tower-http = { version = "0.5", features = ["cors"], optional = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio-test = "0.4"
+
+[features]
+default = ["stdio"]
+stdio = []
+sse = ["axum", "tower", "tower-http"]
+all-transports = ["stdio", "sse"]
+
+[[bin]]
+name = "agentic-workflow-mcp"
+path = "src/main.rs"
+
+[lib]
+name = "agentic_workflow_mcp"
+path = "src/lib.rs"

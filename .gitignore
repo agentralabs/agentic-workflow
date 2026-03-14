@@ -1,0 +1,96 @@
+# Rust
+target/
+*.swp
+*.swo
+**/*.rs.bk
+*.pdb
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.fleet/
+
+# OS
+.DS_Store
+._*
+Thumbs.db
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.tox/
+*.profraw
+*.profdata
+tarpaulin-report.html
+lcov.info
+
+# Benchmarks output
+criterion/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Planning docs / AI prompts (internal only)
+planning-docs/
+CLAUDE-CODE-INSTRUCTIONS*.md
+SPEC-*.md
+
+# Internal vision / roadmap documents
+docs/VISION-*.md
+
+# Claude Code
+.claude/
+.agentra/
+docs/REPO_HYGIENE.md
+
+# Root-level paper files (canonical copies are in paper/)
+/agenticworkflow-paper.*
+/references.bib
+
+# FFI (build artifacts)
+/ffi/
+
+# Internal docs (not for public repo)
+docs/internal/
+ECOSYSTEM-CONVENTIONS.md
+
+# Local goals (internal only)
+goals/
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Internal architecture docs
+THE-UNIVERSAL-FIX.md
+
+# Logs
+*.log
